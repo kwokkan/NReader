@@ -5,3 +5,19 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@if (Sources == null)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <h2>Sources</h2>
+
+    @foreach (var source in Sources)
+    {
+        <div>
+            <h3>@source.Title</h3>
+        </div>
+    }
+}
