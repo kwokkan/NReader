@@ -7,12 +7,16 @@
     </div>
 
     <div class="main">
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+        <CascadingValue Name="SelectedSource" Value="_selectedSource">
+            <CascadingValue Name="SelectedArticle" Value="_selectedArticle">
+                <div class="top-row px-4">
+                    <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+                </div>
 
-        <div class="content px-4">
-            @Body
-        </div>
+                <div class="content px-4">
+                    @Body
+                </div>
+            </CascadingValue>
+        </CascadingValue>
     </div>
 </div>
