@@ -5,13 +5,21 @@ namespace NReader.Blazor.Shared
 {
     public partial class MainLayout
     {
+        private Source _selectedSource;
+        private Article _selectedArticle;
+
         private Task HandleOnSourceSelectedAsync(Source source)
         {
+            _selectedSource = source;
+            _selectedArticle = null;
+
             return Task.CompletedTask;
         }
 
         private Task HandleOnArticleSelectedAsync(Article article)
         {
+            _selectedArticle = article;
+
             return Task.CompletedTask;
         }
     }
