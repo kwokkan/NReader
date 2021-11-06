@@ -11,6 +11,9 @@ namespace NReader.Blazor.Shared
         [Inject]
         private ISourceService SourceService { get; set; }
 
+        [Parameter]
+        public EventCallback<Source> OnSourceSelected { get; set; }
+
         private bool collapseNavMenu = true;
 
         private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -20,6 +23,11 @@ namespace NReader.Blazor.Shared
         private void ToggleNavMenu()
         {
             collapseNavMenu = !collapseNavMenu;
+        }
+
+        private async Task HandleOnSourceClickAsync(Source source)
+        {
+            await OnSourceSelected.InvokeAsync(source);
         }
 
         protected override async Task OnInitializedAsync()
