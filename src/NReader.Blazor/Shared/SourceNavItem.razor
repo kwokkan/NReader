@@ -1,0 +1,28 @@
+﻿
+<li class="nav-item px-3">
+    <a class="nav-link"
+       href="#"
+       @onclick="async () => await HandleOnSourceSelectedAsync(Source)"
+       @onclick:preventDefault
+       @onclick:stopPropagation>
+        <span class="oi oi-document" aria-hidden="true"></span> @Source.Title
+    </a>
+
+    @if (_articles != null)
+    {
+        <ul class="nav flex-column">
+            @foreach (var article in _articles)
+            {
+                <li class="nav-item ps-3">
+                    <a class="nav-link"
+                       href="#"
+                       @onclick="async ()=> await HandleOnArticleSelectedAsync(article)"
+                       @onclick:preventDefault
+                       @onclick:stopPropagation>
+                        @article.Title
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+</li>

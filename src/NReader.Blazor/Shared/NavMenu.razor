@@ -17,15 +17,9 @@
         {
             foreach (var source in _sources)
             {
-                <li class="nav-item px-3">
-                    <a class="nav-link"
-                       href="#"
-                       @onclick="async () => await HandleOnSourceClickAsync(source)"
-                       @onclick:preventDefault
-                       @onclick:stopPropagation>
-                        <span class="oi oi-document" aria-hidden="true"></span> @source.Title
-                    </a>
-                </li>
+                <SourceNavItem Source="source"
+                               OnSourceSelected="HandleOnSourceSelectedAsync"
+                               OnArticleSelected="HandleOnArticleSelectedAsync" />
             }
         }
     </ul>
