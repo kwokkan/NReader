@@ -2,30 +2,25 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using NReader.Abstractions;
-using NReader.Core;
 
 namespace NReader.Blazor.Shared
 {
-    public partial class NavMenu
+    public partial class SourceNavItem
     {
-        [Inject]
-        private ISourceService SourceService { get; set; }
-
         [Parameter]
         public EventCallback<Source> OnSourceSelected { get; set; }
 
         [Parameter]
         public EventCallback<Article> OnArticleSelected { get; set; }
 
-        private bool collapseNavMenu = true;
+        [Parameter]
+        public Source Source { get; set; }
 
-        private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+        private IReadOnlyCollection<Article> _articles;
 
-        private IEnumerable<Source> _sources;
-
-        private void ToggleNavMenu()
+        protected override async Task OnInitializedAsync()
         {
-            collapseNavMenu = !collapseNavMenu;
+            _articles = await Source.GetArticlesAsync();
         }
 
         private async Task HandleOnSourceSelectedAsync(Source source)
@@ -36,11 +31,6 @@ namespace NReader.Blazor.Shared
         private async Task HandleOnArticleSelectedAsync(Article article)
         {
             await OnArticleSelected.InvokeAsync(article);
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            _sources = await SourceService.GetSourcesAsync();
         }
     }
 }

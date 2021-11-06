@@ -9,5 +9,10 @@ namespace NReader.Blazor.Shared
         {
             return Task.CompletedTask;
         }
+
+        private Task HandleOnArticleSelectedAsync(Article article)
+        {
+            return Task.CompletedTask;
+        }
     }
 }
