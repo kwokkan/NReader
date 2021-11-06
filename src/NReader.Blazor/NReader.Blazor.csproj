@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\extensions\NReader.Extensions.Test\NReader.Extensions.Test.csproj" />
     <ProjectReference Include="..\NReader.Core\NReader.Core.csproj" />
   </ItemGroup>
 
