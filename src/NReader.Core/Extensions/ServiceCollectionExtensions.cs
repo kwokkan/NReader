@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddNReaderCore(this IServiceCollection services)
         {
             services
-                .AddSingleton<ISourceService, SourceService>()
+                .AddScoped<ISourceService, ServiceProviderSourceService>()
             ;
 
             return services;
