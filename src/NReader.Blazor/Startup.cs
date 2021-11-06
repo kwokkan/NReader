@@ -4,8 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using NReader.Blazor.Data;
-
 namespace NReader.Blazor
 {
     public class Startup
@@ -23,7 +21,6 @@ namespace NReader.Blazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
             services.AddNReaderCore();
 
