@@ -1,18 +1,7 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
 @if (SelectedArticle != null)
 {
-    <h4>
-        @SelectedArticle.Title
-    </h4>
-    <h5>
-        @SelectedArticle.Uri
-    </h5>
-
     <ul>
         @foreach (var page in SelectedArticle.Pages)
         {
@@ -36,10 +25,4 @@ Welcome to your new app.
 }
 else if (SelectedSource != null)
 {
-    <h4>
-        @SelectedSource.Title
-    </h4>
-    <h5>
-        @SelectedSource.Url
-    </h5>
 }
