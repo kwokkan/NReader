@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31613.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NReader.Blazor", "src\NReader.Blazor\NReader.Blazor.csproj", "{8E0C60CD-CC25-4E9D-B173-3102D9D1E702}"
 EndProject
@@ -13,7 +13,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NReader.Core", "src\NReader
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extensions", "extensions", "{DDC788D0-8893-4E22-8F59-43F951B81D51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReader.Extensions.Test", "extensions\NReader.Extensions.Test\NReader.Extensions.Test.csproj", "{F9261868-2A01-44F8-A8C0-D595CE2BE7B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NReader.Extensions.Test", "extensions\NReader.Extensions.Test\NReader.Extensions.Test.csproj", "{F9261868-2A01-44F8-A8C0-D595CE2BE7B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5531D086-0B32-4C55-8DC0-CC655DD8B7AC}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
+		.github\dependabot.yml = .github\dependabot.yml
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
