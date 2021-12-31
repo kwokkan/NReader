@@ -13,6 +13,6 @@ namespace NReader.Abstractions
 
         public Uri Uri { get; set; }
 
-        public IReadOnlyCollection<Page> Pages { get; set; }
+        public IReadOnlyCollection<Page> Pages { get; set; } = Array.Empty<Page>();
     }
 }
