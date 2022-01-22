@@ -9,31 +9,33 @@
 
     <div class="main">
         <CascadingValue Name="SelectedSource" Value="_selectedSource">
-            <CascadingValue Name="SelectedArticle" Value="_selectedArticle">
-                <div class="top-row px-4">
-                    @if (_selectedArticle != null)
-                    {
-                        <h3>
-                            @_selectedSource.Title
-                            >
-                            @_selectedArticle.Title
-                        </h3>
-                    }
-                    else if (_selectedFeed != null)
-                    {
-                        <h3>@_selectedFeed.Title</h3>
-                    }
-                    else if (_selectedSource != null)
-                    {
-                        <h3>
-                            @_selectedSource.Title
-                        </h3>
-                    }
-                </div>
+            <CascadingValue Name="SelectedFeed" Value="_selectedFeed">
+                <CascadingValue Name="SelectedArticle" Value="_selectedArticle">
+                    <div class="top-row px-4">
+                        @if (_selectedArticle != null)
+                        {
+                            <h3>
+                                @_selectedSource.Title
+                                >
+                                @_selectedArticle.Title
+                            </h3>
+                        }
+                        else if (_selectedFeed != null)
+                        {
+                            <h3>@_selectedFeed.Title</h3>
+                        }
+                        else if (_selectedSource != null)
+                        {
+                            <h3>
+                                @_selectedSource.Title
+                            </h3>
+                        }
+                    </div>
 
-                <div class="content px-4">
-                    @Body
-                </div>
+                    <div class="content px-4">
+                        @Body
+                    </div>
+                </CascadingValue>
             </CascadingValue>
         </CascadingValue>
     </div>

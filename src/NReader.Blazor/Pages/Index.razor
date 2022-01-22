@@ -23,6 +23,18 @@
         }
     </ul>
 }
+else if (SelectedFeed != null)
+{
+    if (_articles != null)
+    {
+        <ul>
+            @foreach (var article in _articles)
+            {
+                <li>@article.Title</li>
+            }
+        </ul>
+    }
+}
 else if (SelectedSource != null)
 {
 }
