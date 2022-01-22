@@ -14,6 +14,7 @@ namespace NReader.Extensions.Test
             {
                 Id = "1",
                 Title = "Chapter 1",
+                Published = DateTime.UtcNow,
                 Pages = new List<Page>
                 {
                     new Page
@@ -27,6 +28,7 @@ namespace NReader.Extensions.Test
             {
                 Id = "2",
                 Title = "Many pages",
+                Published = DateTime.UtcNow,
                 Pages = Enumerable.Range(0, 100)
                     .Select(x => new Page
                     {
