@@ -19,6 +19,11 @@ namespace NReader.Blazor.Pages
 
         private IReadOnlyCollection<Article> _articles;
 
+        private async Task HandleArticleSelectedAsync(Article article)
+        {
+            SelectedArticle = await SelectedSource.GetArticleAsync(article);
+        }
+
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();

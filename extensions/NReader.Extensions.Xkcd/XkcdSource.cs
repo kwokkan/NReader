@@ -1,4 +1,5 @@
-﻿using AngleSharp.Html.Parser;
+﻿using System.Text.Json;
+using AngleSharp.Html.Parser;
 using NReader.Abstractions;
 
 namespace NReader.Extensions.Xkcd;
@@ -14,6 +15,8 @@ public class XkcdSource : Source
             Uri = new Uri(FeedUrl)
         }
     };
+
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
     public override string Title => "xkcd";
 
@@ -51,10 +54,37 @@ public class XkcdSource : Source
             {
                 Id = id,
                 Title = current.TextContent,
-                Uri = new Uri(Url, href),
+                Uri = new Uri(Url, $"{id}/info.0.json"),
             });
         }
 
         return articles;
+    }
+
+    public override async Task<Article> GetArticleAsync(Article article)
+    {
+        var responseString = await _httpClient.GetStringAsync(article.Uri);
+        var model = JsonSerializer.Deserialize<InternalArticle>(responseString, _jsonSerializerOptions);
+
+        var output = new Article
+        {
+            Id = article.Id,
+            Title = model.Title,
+            Uri = article.Uri,
+            Pages = new Page[]
+            {
+                new Page
+                {
+                    Content  = model.Img,
+                    Type = ArticleType.Image,
+                },
+                new Page
+                {
+                    Content = model.Alt,
+                }
+            }
+        };
+
+        return output;
     }
 }
