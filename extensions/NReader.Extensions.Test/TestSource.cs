@@ -36,11 +36,24 @@ namespace NReader.Extensions.Test
             }
         };
 
+        private static readonly IReadOnlyCollection<Feed> TestFeeds = new Feed[]
+        {
+            new Feed
+            {
+                Articles = TestArticles
+            }
+        };
+
         public override string Title => "Test Source";
 
         public override Uri Url => new Uri("https://localhost/");
 
-        public override Task<IReadOnlyCollection<Article>> GetArticlesAsync()
+        public override Task<IReadOnlyCollection<Feed>> GetFeedsAsync()
+        {
+            return Task.FromResult(TestFeeds);
+        }
+
+        public override Task<IReadOnlyCollection<Article>> GetArticlesAsync(Feed feed)
         {
             return Task.FromResult(TestArticles);
         }

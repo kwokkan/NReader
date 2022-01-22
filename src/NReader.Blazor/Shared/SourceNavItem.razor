@@ -8,18 +8,18 @@
         <span class="oi oi-document" aria-hidden="true"></span> @Source.Title
     </a>
 
-    @if (_articles != null)
+    @if (_feeds != null)
     {
         <ul class="nav flex-column">
-            @foreach (var article in _articles)
+            @foreach (var feed in _feeds)
             {
                 <li class="nav-item ps-3">
                     <a class="nav-link"
                        href="#"
-                       @onclick="async ()=> await HandleOnArticleSelectedAsync(article)"
+                       @onclick="async ()=> await HandleOnFeedSelectedAsync(feed)"
                        @onclick:preventDefault
                        @onclick:stopPropagation>
-                        @article.Title
+                        @feed.Title
                     </a>
                 </li>
             }

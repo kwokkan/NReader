@@ -5,11 +5,19 @@ namespace NReader.Extensions.Xkcd;
 
 public class XkcdSource : Source
 {
+    private const string FeedUrl = "https://xkcd.com/archive/";
+
+    private static readonly IReadOnlyCollection<Feed> DefaultFeeds = new Feed[]
+    {
+        new Feed
+        {
+            Uri = new Uri(FeedUrl)
+        }
+    };
+
     public override string Title => "xkcd";
 
     public override Uri Url => new Uri("https://xkcd.com/");
-
-    private const string FeedUrl = "https://xkcd.com/archive/";
 
     private readonly HttpClient _httpClient;
 
@@ -18,9 +26,14 @@ public class XkcdSource : Source
         _httpClient = httpClient;
     }
 
-    public override async Task<IReadOnlyCollection<Article>> GetArticlesAsync()
+    public override Task<IReadOnlyCollection<Feed>> GetFeedsAsync()
     {
-        var responseString = await _httpClient.GetStringAsync(FeedUrl);
+        return Task.FromResult(DefaultFeeds);
+    }
+
+    public override async Task<IReadOnlyCollection<Article>> GetArticlesAsync(Feed feed)
+    {
+        var responseString = await _httpClient.GetStringAsync(feed.Uri);
 
         var parser = new HtmlParser();
         using var document = parser.ParseDocument(responseString);
