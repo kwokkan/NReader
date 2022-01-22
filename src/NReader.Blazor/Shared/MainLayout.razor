@@ -3,6 +3,7 @@
 <div class="page">
     <div class="sidebar">
         <NavMenu OnSourceSelected="HandleOnSourceSelectedAsync"
+                 OnFeedSelected="HandleOnFeedSelectedAsync"
                  OnArticleSelected="HandleOnArticleSelectedAsync" />
     </div>
 
@@ -17,6 +18,10 @@
                             >
                             @_selectedArticle.Title
                         </h3>
+                    }
+                    else if (_selectedFeed != null)
+                    {
+                        <h3>@_selectedFeed.Title</h3>
                     }
                     else if (_selectedSource != null)
                     {
