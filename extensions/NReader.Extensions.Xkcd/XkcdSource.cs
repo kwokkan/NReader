@@ -71,6 +71,7 @@ public class XkcdSource : Source
             Id = article.Id,
             Title = model.Title,
             Uri = article.Uri,
+            Published = new DateTime(model.Year, model.Month, model.Day),
             Pages = new Page[]
             {
                 new Page
