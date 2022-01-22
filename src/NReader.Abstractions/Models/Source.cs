@@ -22,5 +22,10 @@ namespace NReader.Abstractions
         {
             return Task.FromResult(EmptyArticles);
         }
+
+        public virtual Task<Article> GetArticleAsync(Article article)
+        {
+            return Task.FromResult(Article.Empty);
+        }
     }
 }

@@ -2,6 +2,8 @@
 
 @if (SelectedArticle != null)
 {
+    <h4>@SelectedArticle.Title</h4>
+
     <ul>
         @foreach (var page in SelectedArticle.Pages)
         {
@@ -14,7 +16,7 @@
                         </p>
                         break;
                     case Abstractions.ArticleType.Image:
-                        <img src="@(page.Content)"/>
+                        <img src="@(page.Content)" />
                         break;
                     default:
                         break;
@@ -30,7 +32,11 @@ else if (SelectedFeed != null)
         <ul>
             @foreach (var article in _articles)
             {
-                <li>@article.Title</li>
+                <li @onclick="() => HandleArticleSelectedAsync(article)"
+                    @onclick:preventDefault
+                    @onclick:stopPropagation>
+                    @article.Title
+                </li>
             }
         </ul>
     }
