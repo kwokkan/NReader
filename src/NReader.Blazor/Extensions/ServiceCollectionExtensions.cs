@@ -17,5 +17,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services;
         }
+
+        public static IServiceCollection AddNReaderStorageProvider(this IServiceCollection services)
+        {
+            services.AddSqliteStorageProvider();
+
+            return services;
+        }
     }
 }
