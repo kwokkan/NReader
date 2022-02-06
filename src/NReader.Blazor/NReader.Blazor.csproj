@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\extensions\NReader.Extensions.Test\NReader.Extensions.Test.csproj" />
     <ProjectReference Include="..\..\extensions\NReader.Extensions.Xkcd\NReader.Extensions.Xkcd.csproj" />
     <ProjectReference Include="..\NReader.Core\NReader.Core.csproj" />
+    <ProjectReference Include="..\NReader.Storage.Sqlite\NReader.Storage.Sqlite.csproj" />
   </ItemGroup>
 
 </Project>
