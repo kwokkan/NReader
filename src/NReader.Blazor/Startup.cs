@@ -22,9 +22,7 @@ namespace NReader.Blazor
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddNReaderCore();
-
-            services.AddNReaderStaticSources();
+            services.AddNReader();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
