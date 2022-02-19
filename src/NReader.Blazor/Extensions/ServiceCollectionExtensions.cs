@@ -1,4 +1,5 @@
-﻿using NReader.Abstractions;
+﻿using Microsoft.Extensions.Configuration;
+using NReader.Abstractions;
 using NReader.Blazor;
 using NReader.Extensions.Test;
 using NReader.Extensions.Xkcd;
@@ -7,13 +8,13 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddNReader(this IServiceCollection services)
+        public static IServiceCollection AddNReader(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddNReaderCore();
 
             services.AddNReaderStaticSources();
 
-            services.AddNReaderStorageProvider();
+            services.AddNReaderStorageProvider(configuration);
 
             services.AddNReaderInitialisation();
 
@@ -32,9 +33,9 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static IServiceCollection AddNReaderStorageProvider(this IServiceCollection services)
+        private static IServiceCollection AddNReaderStorageProvider(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSqliteStorageProvider();
+            services.AddSqliteStorageProvider(configuration);
 
             return services;
         }
