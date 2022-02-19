@@ -9,6 +9,8 @@ public class SqliteStorageProvider : IStorageProvider
     private readonly ILogger<SqliteStorageProvider> _logger;
     private readonly SqliteOptions _options;
 
+    private string? _connectionString;
+
     public SqliteStorageProvider(ILogger<SqliteStorageProvider> logger, SqliteOptions options)
     {
         _logger = logger;
@@ -31,16 +33,48 @@ public class SqliteStorageProvider : IStorageProvider
         {
             DataSource = absoluteDbPath,
         };
+        _connectionString = connectionStringBuilder.ConnectionString;
 
-        using var connection = new SqliteConnection(connectionStringBuilder.ConnectionString);
+        using var connection = CreateConnection();
 
         await connection.OpenAsync();
 
         await CreateDatabaseAsync(connection);
 
         await MigrateDatabaseAsync(connection);
+    }
 
-        await connection.CloseAsync();
+    async Task IStorageProvider.ReadArticlesAsync(string userId, IEnumerable<string> articleIds)
+    {
+        using var connection = CreateConnection();
+
+        await connection.OpenAsync();
+
+        var uid = await GetOrCreateUserId(connection, userId);
+
+        using var transaction = await connection.BeginTransactionAsync();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "insert into history (read_at_utc, user_id, article_id) values (@readAt, @userId, @articleId)";
+        await command.PrepareAsync();
+
+        var now = DateTime.UtcNow;
+
+        foreach (var articleId in articleIds)
+        {
+            command.Parameters.Clear();
+
+            command.Parameters.AddWithValue("@readAt", now);
+            command.Parameters.AddWithValue("@userId", uid);
+            command.Parameters.AddWithValue("@articleId", articleId);
+
+            await command.ExecuteNonQueryAsync();
+        }
+    }
+
+    private SqliteConnection CreateConnection()
+    {
+        return new SqliteConnection(_connectionString);
     }
 
     private static async Task CreateDatabaseAsync(SqliteConnection connection)
@@ -55,6 +89,17 @@ public class SqliteStorageProvider : IStorageProvider
         await connection.ExecuteNonQueryAsync("create table metadata (version integer)");
 
         await connection.ExecuteNonQueryAsync("insert into metadata(version) values (0)");
+    }
+
+    private static async Task<long> GetOrCreateUserId(SqliteConnection connection, string userId)
+    {
+        await connection.ExecuteNonQueryAsync(
+            "insert or ignore into user (identifier, created_at_utc) values (@identifier, @now);",
+            new SqliteParameter("@identifier", userId),
+            new SqliteParameter("@now", DateTime.UtcNow)
+        );
+
+        return await connection.ExecuteScalarAsync<long>("select id from user where identifier = @identifier;");
     }
 
     private async Task MigrateDatabaseAsync(SqliteConnection connection)

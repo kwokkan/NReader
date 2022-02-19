@@ -5,7 +5,9 @@ internal static class V1
     internal readonly static string Sql = @"
 create table user(
     id integer primary key,
-    created_at_utc text not null
+    identifier text not null,
+    created_at_utc text not null,
+    constraint ux_user_identifier unique (identifier)
 );
 
 create table source(
