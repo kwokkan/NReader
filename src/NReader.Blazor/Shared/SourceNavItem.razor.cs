@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using NReader.Abstractions;
 using NReader.Core;
 
 namespace NReader.Blazor.Shared
@@ -12,13 +11,13 @@ namespace NReader.Blazor.Shared
         private ISourceManager SourceManager { get; set; }
 
         [Parameter]
-        public EventCallback<Source> OnSourceSelected { get; set; }
+        public EventCallback<MappedSource> OnSourceSelected { get; set; }
 
         [Parameter]
-        public EventCallback<Feed> OnFeedSelected { get; set; }
+        public EventCallback<MappedFeed> OnFeedSelected { get; set; }
 
         [Parameter]
-        public EventCallback<Article> OnArticleSelected { get; set; }
+        public EventCallback<MappedArticle> OnArticleSelected { get; set; }
 
         [Parameter]
         public MappedSource Source { get; set; }
@@ -32,15 +31,15 @@ namespace NReader.Blazor.Shared
 
         private async Task HandleOnSourceSelectedAsync(MappedSource source)
         {
-            await OnSourceSelected.InvokeAsync(source.Source);
+            await OnSourceSelected.InvokeAsync(source);
         }
 
         private async Task HandleOnFeedSelectedAsync(MappedFeed feed)
         {
-            await OnFeedSelected.InvokeAsync(feed.Feed);
+            await OnFeedSelected.InvokeAsync(feed);
         }
 
-        private async Task HandleOnArticleSelectedAsync(Article article)
+        private async Task HandleOnArticleSelectedAsync(MappedArticle article)
         {
             await OnArticleSelected.InvokeAsync(article);
         }

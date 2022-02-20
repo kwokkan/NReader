@@ -12,13 +12,13 @@ namespace NReader.Blazor.Shared
         private ISourceManager SourceManager { get; set; }
 
         [Parameter]
-        public EventCallback<Source> OnSourceSelected { get; set; }
+        public EventCallback<MappedSource> OnSourceSelected { get; set; }
 
         [Parameter]
-        public EventCallback<Feed> OnFeedSelected { get; set; }
+        public EventCallback<MappedFeed> OnFeedSelected { get; set; }
 
         [Parameter]
-        public EventCallback<Article> OnArticleSelected { get; set; }
+        public EventCallback<MappedArticle> OnArticleSelected { get; set; }
 
         private bool collapseNavMenu = true;
 
@@ -31,17 +31,17 @@ namespace NReader.Blazor.Shared
             collapseNavMenu = !collapseNavMenu;
         }
 
-        private async Task HandleOnSourceSelectedAsync(Source source)
+        private async Task HandleOnSourceSelectedAsync(MappedSource source)
         {
             await OnSourceSelected.InvokeAsync(source);
         }
 
-        private async Task HandleOnFeedSelectedAsync(Feed feed)
+        private async Task HandleOnFeedSelectedAsync(MappedFeed feed)
         {
             await OnFeedSelected.InvokeAsync(feed);
         }
 
-        private async Task HandleOnArticleSelectedAsync(Article article)
+        private async Task HandleOnArticleSelectedAsync(MappedArticle article)
         {
             await OnArticleSelected.InvokeAsync(article);
         }

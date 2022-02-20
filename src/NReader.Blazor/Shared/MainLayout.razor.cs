@@ -1,15 +1,15 @@
 ﻿using System.Threading.Tasks;
-using NReader.Abstractions;
+using NReader.Core;
 
 namespace NReader.Blazor.Shared
 {
     public partial class MainLayout
     {
-        private Source _selectedSource;
-        private Feed _selectedFeed;
-        private Article _selectedArticle;
+        private MappedSource _selectedSource;
+        private MappedFeed _selectedFeed;
+        private MappedArticle _selectedArticle;
 
-        private Task HandleOnSourceSelectedAsync(Source source)
+        private Task HandleOnSourceSelectedAsync(MappedSource source)
         {
             _selectedSource = source;
             _selectedArticle = null;
@@ -17,14 +17,14 @@ namespace NReader.Blazor.Shared
             return Task.CompletedTask;
         }
 
-        private Task HandleOnFeedSelectedAsync(Feed feed)
+        private Task HandleOnFeedSelectedAsync(MappedFeed feed)
         {
             _selectedFeed = feed;
 
             return Task.CompletedTask;
         }
 
-        private Task HandleOnArticleSelectedAsync(Article article)
+        private Task HandleOnArticleSelectedAsync(MappedArticle article)
         {
             _selectedArticle = article;
 

@@ -14,5 +14,7 @@ public interface IStorageProvider
 
     Task<IDictionary<string, long>> GetOrCreateFeedsAsync(long sourceId, IEnumerable<string> feedIds);
 
+    Task<IDictionary<string, long>> GetOrCreateArticlesAsync(long feedId, IEnumerable<string> articleIds);
+
     Task ReadArticlesAsync(string userId, IEnumerable<string> articleIds);
 }

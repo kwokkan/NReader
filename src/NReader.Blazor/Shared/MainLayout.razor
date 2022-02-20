@@ -15,19 +15,19 @@
                         @if (_selectedArticle != null)
                         {
                             <h3>
-                                @_selectedSource.Title
+                                @_selectedSource.Source.Title
                                 >
-                                @_selectedArticle.Title
+                                @_selectedArticle.Article.Title
                             </h3>
                         }
                         else if (_selectedFeed != null)
                         {
-                            <h3>@_selectedFeed.Title</h3>
+                            <h3>@_selectedFeed.Feed.Title</h3>
                         }
                         else if (_selectedSource != null)
                         {
                             <h3>
-                                @_selectedSource.Title
+                                @_selectedSource.Source.Title
                             </h3>
                         }
                     </div>
