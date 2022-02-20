@@ -10,5 +10,7 @@ public interface IStorageProvider
     /// <returns></returns>
     Task InitialiseAsync();
 
+    Task<IDictionary<string, long>> GetOrCreateSourcesAsync(IEnumerable<string> sourceIds);
+
     Task ReadArticlesAsync(string userId, IEnumerable<string> articleIds);
 }

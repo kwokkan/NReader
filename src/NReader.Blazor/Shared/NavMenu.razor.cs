@@ -9,7 +9,7 @@ namespace NReader.Blazor.Shared
     public partial class NavMenu
     {
         [Inject]
-        private ISourceService SourceService { get; set; }
+        private ISourceManager SourceManager { get; set; }
 
         [Parameter]
         public EventCallback<Source> OnSourceSelected { get; set; }
@@ -48,7 +48,7 @@ namespace NReader.Blazor.Shared
 
         protected override async Task OnInitializedAsync()
         {
-            _sources = await SourceService.GetSourcesAsync();
+            _sources = await SourceManager.GetAllSourcesAsync();
         }
     }
 }

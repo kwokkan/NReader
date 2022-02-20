@@ -12,7 +12,9 @@ create table user(
 
 create table source(
     id integer primary key,
-    created_at_utc text not null
+    identifier text not null,
+    created_at_utc text not null,
+    constraint ux_source_identifier unique (identifier)
 );
 
 create table feed(

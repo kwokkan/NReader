@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NReader.Abstractions\NReader.Abstractions.csproj" />
+    <ProjectReference Include="..\NReader.Storage.Abstractions\NReader.Storage.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

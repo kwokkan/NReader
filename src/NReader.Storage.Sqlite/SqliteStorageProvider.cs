@@ -9,8 +9,6 @@ public class SqliteStorageProvider : IStorageProvider
     private readonly ILogger<SqliteStorageProvider> _logger;
     private readonly SqliteOptions _options;
 
-    private string? _connectionString;
-
     public SqliteStorageProvider(ILogger<SqliteStorageProvider> logger, SqliteOptions options)
     {
         _logger = logger;
@@ -19,22 +17,6 @@ public class SqliteStorageProvider : IStorageProvider
 
     async Task IStorageProvider.InitialiseAsync()
     {
-        if (string.IsNullOrWhiteSpace(_options.AppDb))
-        {
-            throw new Exception("AppDb cannot be empty.");
-        }
-
-        var absoluteDbPath = Path.IsPathFullyQualified(_options.AppDb) ? _options.AppDb : Path.Combine(AppContext.BaseDirectory, _options.AppDb);
-        var fullPath = Path.GetDirectoryName(absoluteDbPath);
-
-        Directory.CreateDirectory(fullPath!);
-
-        var connectionStringBuilder = new SqliteConnectionStringBuilder
-        {
-            DataSource = absoluteDbPath,
-        };
-        _connectionString = connectionStringBuilder.ConnectionString;
-
         using var connection = CreateConnection();
 
         await connection.OpenAsync();
@@ -42,6 +24,58 @@ public class SqliteStorageProvider : IStorageProvider
         await CreateDatabaseAsync(connection);
 
         await MigrateDatabaseAsync(connection);
+    }
+
+    async Task<IDictionary<string, long>> IStorageProvider.GetOrCreateSourcesAsync(IEnumerable<string> sourceIds)
+    {
+        await using var connection = CreateConnection();
+
+        await connection.OpenAsync();
+
+        await using var transaction = await connection.BeginTransactionAsync();
+
+        var tempTableName = "tmp_" + Guid.NewGuid().ToString().Replace("-", string.Empty).ToLower();
+        
+        await connection.ExecuteNonQueryAsync($"create temp table {tempTableName} (identifier text unique not null);");
+        
+        var insertCommand = connection.CreateCommand();
+        insertCommand.CommandText = $"insert or ignore into source (identifier, created_at_utc) values (@identifier, @now); insert into {tempTableName} values (@identifier);";
+
+        var identifierParam = insertCommand.CreateParameter();
+        identifierParam.ParameterName = "@identifier";
+        insertCommand.Parameters.Add(identifierParam);
+
+        var now = DateTime.UtcNow;
+        var nowParam = insertCommand.CreateParameter();
+        nowParam.ParameterName = "@now";
+        nowParam.Value = now;
+        insertCommand.Parameters.Add(nowParam);
+
+        await insertCommand.PrepareAsync();
+
+        foreach (var sourceId in sourceIds)
+        {
+            identifierParam.Value = sourceId;
+            await insertCommand.ExecuteNonQueryAsync();
+        }
+
+        var selectCommand = connection.CreateCommand();
+        selectCommand.CommandText = $"select s.id, s.identifier from source s inner join {tempTableName} t on t.identifier = s.identifier;";
+
+        await using var reader = await selectCommand.ExecuteReaderAsync();
+        var mapped = new Dictionary<string, long>();
+
+        while (await reader.ReadAsync())
+        {
+            var newId = reader.GetInt64(0);
+            var newIdentifier = reader.GetString(1);
+              
+            mapped.Add(newIdentifier, newId);
+        }
+
+        await transaction.CommitAsync();
+
+        return mapped;
     }
 
     async Task IStorageProvider.ReadArticlesAsync(string userId, IEnumerable<string> articleIds)
@@ -74,7 +108,22 @@ public class SqliteStorageProvider : IStorageProvider
 
     private SqliteConnection CreateConnection()
     {
-        return new SqliteConnection(_connectionString);
+        if (string.IsNullOrWhiteSpace(_options.AppDb))
+        {
+            throw new Exception("AppDb cannot be empty.");
+        }
+
+        var absoluteDbPath = Path.IsPathFullyQualified(_options.AppDb) ? _options.AppDb : Path.Combine(AppContext.BaseDirectory, _options.AppDb);
+        var fullPath = Path.GetDirectoryName(absoluteDbPath);
+
+        Directory.CreateDirectory(fullPath!);
+
+        var connectionStringBuilder = new SqliteConnectionStringBuilder
+        {
+            DataSource = absoluteDbPath,
+        };
+
+        return new SqliteConnection(connectionStringBuilder.ConnectionString);
     }
 
     private static async Task CreateDatabaseAsync(SqliteConnection connection)

@@ -10,6 +10,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<ISourceService, ServiceProviderSourceService>()
             ;
 
+            services
+                .AddScoped<ISourceManager, SourceManager>()
+            ;
+
             return services;
         }
     }
