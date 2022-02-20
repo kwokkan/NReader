@@ -196,30 +196,35 @@ public class SqliteStorageProvider : IStorageProvider
 
     async Task IStorageProvider.ReadArticlesAsync(string userId, IEnumerable<string> articleIds)
     {
-        using var connection = CreateConnection();
+        await using var connection = CreateConnection();
 
         await connection.OpenAsync();
 
         var uid = await GetOrCreateUserId(connection, userId);
 
-        using var transaction = await connection.BeginTransactionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
 
         using var command = connection.CreateCommand();
         command.CommandText = "insert into history (read_at_utc, user_id, article_id) values (@readAt, @userId, @articleId)";
-        await command.PrepareAsync();
 
         var now = DateTime.UtcNow;
+        command.Parameters.AddWithValue("@readAt", now);
+        command.Parameters.AddWithValue("@userId", uid);
+
+        var articleParam = command.CreateParameter();
+        articleParam.ParameterName = "@articleId";
+        command.Parameters.Add(articleParam);
+
+        await command.PrepareAsync();
 
         foreach (var articleId in articleIds)
         {
-            command.Parameters.Clear();
-
-            command.Parameters.AddWithValue("@readAt", now);
-            command.Parameters.AddWithValue("@userId", uid);
-            command.Parameters.AddWithValue("@articleId", articleId);
+            articleParam.Value = articleId;
 
             await command.ExecuteNonQueryAsync();
         }
+
+        await transaction.CommitAsync();
     }
 
     private SqliteConnection CreateConnection()
@@ -264,7 +269,10 @@ public class SqliteStorageProvider : IStorageProvider
             new SqliteParameter("@now", DateTime.UtcNow)
         );
 
-        return await connection.ExecuteScalarAsync<long>("select id from user where identifier = @identifier;");
+        return await connection.ExecuteScalarAsync<long>(
+            "select id from user where identifier = @identifier;",
+            new SqliteParameter ("@identifier", userId)
+        );
     }
 
     private async Task MigrateDatabaseAsync(SqliteConnection connection)

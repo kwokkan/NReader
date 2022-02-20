@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-
-using NReader.Abstractions;
+using NReader.Blazor.Constants;
 using NReader.Core;
 
 namespace NReader.Blazor.Pages
@@ -19,13 +18,15 @@ namespace NReader.Blazor.Pages
         private MappedFeed SelectedFeed { get; set; }
 
         [CascadingParameter(Name = "SelectedArticle")]
-        private Article SelectedArticle { get; set; }
+        private MappedArticle SelectedArticle { get; set; }
 
         private IReadOnlyCollection<MappedArticle> _articles;
 
         private async Task HandleArticleSelectedAsync(MappedArticle article)
         {
-            SelectedArticle = await SelectedSource.Source.GetArticleAsync(article.Article);
+            SelectedArticle = await SourceManager.GetArticleAsync(SelectedSource, article);
+
+            await SourceManager.ReadArticlesAsync(AuthenticationConstants.UserId, new[] { SelectedArticle });
         }
 
         protected override async Task OnParametersSetAsync()

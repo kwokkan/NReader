@@ -9,5 +9,9 @@ public interface ISourceManager
 
     Task<IReadOnlyCollection<MappedFeed>> GetFeedsAsync(MappedSource source);
 
+    Task<MappedArticle> GetArticleAsync(MappedSource source, MappedArticle article);
+
     Task<IReadOnlyCollection<MappedArticle>> GetArticlesAsync(MappedSource source, MappedFeed feed);
+
+    Task ReadArticlesAsync(string userId, IEnumerable<MappedArticle> articles);
 }
