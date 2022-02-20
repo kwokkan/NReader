@@ -37,6 +37,17 @@ public class SourceManager : ISourceManager
         return mapped;
     }
 
+    async Task<MappedArticle> ISourceManager.GetArticleAsync(MappedSource source, MappedArticle article)
+    {
+        var newArticle = await source.Source.GetArticleAsync(article.Article);
+
+        return new MappedArticle
+        {
+            Id = article.Id,
+            Article = newArticle
+        };
+    }
+
     async Task<IReadOnlyCollection<MappedArticle>> ISourceManager.GetArticlesAsync(MappedSource source, MappedFeed feed)
     {
         var articles = await source.Source.GetArticlesAsync(feed.Feed);
@@ -77,5 +88,12 @@ public class SourceManager : ISourceManager
         }
 
         return mapped;
+    }
+
+    async Task ISourceManager.ReadArticlesAsync(string userId, IEnumerable<MappedArticle> articles)
+    {
+        var articleIds = articles.Select(x => x.Article.Id).ToArray();
+
+        await _storageProvider.ReadArticlesAsync(userId, articleIds);
     }
 }

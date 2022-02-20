@@ -2,14 +2,14 @@
 
 @if (SelectedArticle != null)
 {
-    <h4>@SelectedArticle.Title</h4>
+    <h4>@SelectedArticle.Article.Title</h4>
 
     <aside>
-        <small>@SelectedArticle.Published</small>
+        <small>@SelectedArticle.Article.Published</small>
     </aside>
 
     <ul>
-        @foreach (var page in SelectedArticle.Pages)
+        @foreach (var page in SelectedArticle.Article.Pages)
         {
             <li>
                 @switch (page.Type)
