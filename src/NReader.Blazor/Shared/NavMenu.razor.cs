@@ -24,7 +24,7 @@ namespace NReader.Blazor.Shared
 
         private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-        private IEnumerable<Source> _sources;
+        private IEnumerable<MappedSource> _sources;
 
         private void ToggleNavMenu()
         {

@@ -19,9 +19,11 @@ create table source(
 
 create table feed(
     id integer primary key,
+    identifier text not null,
     created_at_utc text not null,
     source_id integer not null,
-    foreign key(source_id) references source(id)
+    foreign key(source_id) references source(id),
+    constraint ux_feed_identifier_source_id unique (identifier, source_id)
 );
 
 create table article(

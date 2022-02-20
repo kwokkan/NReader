@@ -78,6 +78,64 @@ public class SqliteStorageProvider : IStorageProvider
         return mapped;
     }
 
+    async Task<IDictionary<string, long>> IStorageProvider.GetOrCreateFeedsAsync(long sourceId, IEnumerable<string> feedIds)
+    {
+        await using var connection = CreateConnection();
+
+        await connection.OpenAsync();
+
+        await using var transaction = await connection.BeginTransactionAsync();
+
+        var tempTableName = "tmp_" + Guid.NewGuid().ToString().Replace("-", string.Empty).ToLower();
+
+        await connection.ExecuteNonQueryAsync($"create temp table {tempTableName} (identifier text unique not null);");
+
+        var insertCommand = connection.CreateCommand();
+        insertCommand.CommandText = $"insert or ignore into feed (identifier, created_at_utc, source_id) values (@identifier, @now, @sourceId); insert into {tempTableName} values (@identifier);";
+
+        var identifierParam = insertCommand.CreateParameter();
+        identifierParam.ParameterName = "@identifier";
+        insertCommand.Parameters.Add(identifierParam);
+
+        var now = DateTime.UtcNow;
+        var nowParam = insertCommand.CreateParameter();
+        nowParam.ParameterName = "@now";
+        nowParam.Value = now;
+        insertCommand.Parameters.Add(nowParam);
+
+        var sourceParam = insertCommand.CreateParameter();
+        sourceParam.ParameterName = "@sourceId";
+        sourceParam.Value = sourceId;
+        insertCommand.Parameters.Add(sourceParam);
+
+        await insertCommand.PrepareAsync();
+
+        foreach (var feedId in feedIds)
+        {
+            identifierParam.Value = feedId;
+            await insertCommand.ExecuteNonQueryAsync();
+        }
+
+        var selectCommand = connection.CreateCommand();
+        selectCommand.CommandText = $"select f.id, f.identifier from feed f inner join {tempTableName} t on t.identifier = f.identifier and f.source_id = @sourceId;";
+        selectCommand.Parameters.AddWithValue("@sourceId", sourceId);
+
+        await using var reader = await selectCommand.ExecuteReaderAsync();
+        var mapped = new Dictionary<string, long>();
+
+        while (await reader.ReadAsync())
+        {
+            var newId = reader.GetInt64(0);
+            var newIdentifier = reader.GetString(1);
+
+            mapped.Add(newIdentifier, newId);
+        }
+
+        await transaction.CommitAsync();
+
+        return mapped;
+    }
+
     async Task IStorageProvider.ReadArticlesAsync(string userId, IEnumerable<string> articleIds)
     {
         using var connection = CreateConnection();
