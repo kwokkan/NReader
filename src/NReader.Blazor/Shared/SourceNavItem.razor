@@ -5,7 +5,7 @@
        @onclick="async () => await HandleOnSourceSelectedAsync(Source)"
        @onclick:preventDefault
        @onclick:stopPropagation>
-        <span class="oi oi-document" aria-hidden="true"></span> @Source.Title
+        <span class="oi oi-document" aria-hidden="true"></span> @Source.Source.Title
     </a>
 
     @if (_feeds != null)
@@ -19,7 +19,7 @@
                        @onclick="async ()=> await HandleOnFeedSelectedAsync(feed)"
                        @onclick:preventDefault
                        @onclick:stopPropagation>
-                        @feed.Title
+                        @feed.Feed.Title
                     </a>
                 </li>
             }

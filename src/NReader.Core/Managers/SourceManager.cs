@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NReader.Abstractions;
 using NReader.Storage.Abstractions;
 
 namespace NReader.Core;
@@ -17,14 +16,45 @@ public class SourceManager : ISourceManager
         _storageProvider = storageProvider;
     }
 
-    async Task<IEnumerable<Source>> ISourceManager.GetAllSourcesAsync()
+    async Task<IEnumerable<MappedSource>> ISourceManager.GetAllSourcesAsync()
     {
         var sources = await _sourceService.GetSourcesAsync();
 
         var sourceIds = sources.Select(x => x.Url.ToString()).ToArray();
 
-        await _storageProvider.GetOrCreateSourcesAsync(sourceIds);
+        var mappedIds = await _storageProvider.GetOrCreateSourcesAsync(sourceIds);
 
-        return sources;
+        var mapped = new List<MappedSource>(sourceIds.Length);
+        foreach (var source in sources)
+        {
+            mapped.Add(new MappedSource
+            {
+                Id = mappedIds.Single(x => x.Key == source.Url.ToString()).Value,
+                Source = source,
+            });
+        }
+
+        return mapped;
+    }
+
+    async Task<IReadOnlyCollection<MappedFeed>> ISourceManager.GetFeedsAsync(MappedSource source)
+    {
+        var feeds = await source.Source.GetFeedsAsync();
+
+        var feedIds = feeds.Select(x => x.Id).ToArray();
+
+        var mappedIds = await _storageProvider.GetOrCreateFeedsAsync(source.Id, feedIds);
+
+        var mapped = new List<MappedFeed>(feedIds.Length);
+        foreach (var feed in feeds)
+        {
+            mapped.Add(new MappedFeed
+            {
+                Id = mappedIds.Single(x => x.Key == feed.Id).Value,
+                Feed = feed,
+            });
+        }
+
+        return mapped;
     }
 }
