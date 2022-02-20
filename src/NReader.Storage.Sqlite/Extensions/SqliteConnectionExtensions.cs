@@ -25,4 +25,15 @@ internal static class SqliteConnectionExtensions
 
         return (TReturn)await command.ExecuteScalarAsync();
     }
+
+    internal static async Task<SqliteDataReader> ExecuteReaderAsync(this SqliteConnection connection, string sql, params SqliteParameter[] parameters)
+    {
+        var command = connection.CreateCommand();
+
+        command.CommandText = sql;
+
+        command.Parameters.AddRange(parameters);
+
+        return await command.ExecuteReaderAsync();
+    }
 }

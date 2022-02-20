@@ -92,7 +92,6 @@ public class SqliteStorageProvider : IStorageProvider
 
         var now = DateTime.UtcNow;
         insertCommand.Parameters.AddWithValue("@now", now);
-
         insertCommand.Parameters.AddWithValue("@sourceId", sourceId);
 
         var identifierParam = insertCommand.CreateParameter();
@@ -144,7 +143,6 @@ public class SqliteStorageProvider : IStorageProvider
 
         var now = DateTime.UtcNow;
         insertCommand.Parameters.AddWithValue("@now", now);
-
         insertCommand.Parameters.AddWithValue("@feedId", feedId);
 
         var identifierParam = insertCommand.CreateParameter();
@@ -159,11 +157,10 @@ public class SqliteStorageProvider : IStorageProvider
             await insertCommand.ExecuteNonQueryAsync();
         }
 
-        var selectCommand = connection.CreateCommand();
-        selectCommand.CommandText = $"select a.id, a.identifier from article a inner join {tempTableName} t on t.identifier = a.identifier and a.feed_id = @feedId;";
-        selectCommand.Parameters.AddWithValue("@feedId", feedId);
+        await using var reader = await connection.ExecuteReaderAsync(
+            $"select a.id, a.identifier from article a inner join {tempTableName} t on t.identifier = a.identifier and a.feed_id = @feedId;",
+            new SqliteParameter("@feedId", feedId));
 
-        await using var reader = await selectCommand.ExecuteReaderAsync();
         var mapped = new Dictionary<string, long>();
 
         while (await reader.ReadAsync())
