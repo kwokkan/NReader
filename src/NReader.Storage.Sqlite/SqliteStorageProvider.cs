@@ -35,21 +35,18 @@ public class SqliteStorageProvider : IStorageProvider
         await using var transaction = await connection.BeginTransactionAsync();
 
         var tempTableName = "tmp_" + Guid.NewGuid().ToString().Replace("-", string.Empty).ToLower();
-        
+
         await connection.ExecuteNonQueryAsync($"create temp table {tempTableName} (identifier text unique not null);");
-        
+
         var insertCommand = connection.CreateCommand();
         insertCommand.CommandText = $"insert or ignore into source (identifier, created_at_utc) values (@identifier, @now); insert into {tempTableName} values (@identifier);";
+
+        var now = DateTime.UtcNow;
+        insertCommand.Parameters.AddWithValue("@now", now);
 
         var identifierParam = insertCommand.CreateParameter();
         identifierParam.ParameterName = "@identifier";
         insertCommand.Parameters.Add(identifierParam);
-
-        var now = DateTime.UtcNow;
-        var nowParam = insertCommand.CreateParameter();
-        nowParam.ParameterName = "@now";
-        nowParam.Value = now;
-        insertCommand.Parameters.Add(nowParam);
 
         await insertCommand.PrepareAsync();
 
@@ -69,7 +66,7 @@ public class SqliteStorageProvider : IStorageProvider
         {
             var newId = reader.GetInt64(0);
             var newIdentifier = reader.GetString(1);
-              
+
             mapped.Add(newIdentifier, newId);
         }
 
@@ -93,20 +90,14 @@ public class SqliteStorageProvider : IStorageProvider
         var insertCommand = connection.CreateCommand();
         insertCommand.CommandText = $"insert or ignore into feed (identifier, created_at_utc, source_id) values (@identifier, @now, @sourceId); insert into {tempTableName} values (@identifier);";
 
+        var now = DateTime.UtcNow;
+        insertCommand.Parameters.AddWithValue("@now", now);
+
+        insertCommand.Parameters.AddWithValue("@sourceId", sourceId);
+
         var identifierParam = insertCommand.CreateParameter();
         identifierParam.ParameterName = "@identifier";
         insertCommand.Parameters.Add(identifierParam);
-
-        var now = DateTime.UtcNow;
-        var nowParam = insertCommand.CreateParameter();
-        nowParam.ParameterName = "@now";
-        nowParam.Value = now;
-        insertCommand.Parameters.Add(nowParam);
-
-        var sourceParam = insertCommand.CreateParameter();
-        sourceParam.ParameterName = "@sourceId";
-        sourceParam.Value = sourceId;
-        insertCommand.Parameters.Add(sourceParam);
 
         await insertCommand.PrepareAsync();
 
@@ -151,20 +142,14 @@ public class SqliteStorageProvider : IStorageProvider
         var insertCommand = connection.CreateCommand();
         insertCommand.CommandText = $"insert or ignore into article (identifier, created_at_utc, feed_id) values (@identifier, @now, @feedId); insert into {tempTableName} values (@identifier);";
 
+        var now = DateTime.UtcNow;
+        insertCommand.Parameters.AddWithValue("@now", now);
+
+        insertCommand.Parameters.AddWithValue("@feedId", feedId);
+
         var identifierParam = insertCommand.CreateParameter();
         identifierParam.ParameterName = "@identifier";
         insertCommand.Parameters.Add(identifierParam);
-
-        var now = DateTime.UtcNow;
-        var nowParam = insertCommand.CreateParameter();
-        nowParam.ParameterName = "@now";
-        nowParam.Value = now;
-        insertCommand.Parameters.Add(nowParam);
-
-        var feedParam = insertCommand.CreateParameter();
-        feedParam.ParameterName = "@feedId";
-        feedParam.Value = feedId;
-        insertCommand.Parameters.Add(feedParam);
 
         await insertCommand.PrepareAsync();
 
