@@ -37,6 +37,27 @@ public class SourceManager : ISourceManager
         return mapped;
     }
 
+    async Task<IReadOnlyCollection<MappedArticle>> ISourceManager.GetArticlesAsync(MappedSource source, MappedFeed feed)
+    {
+        var articles = await source.Source.GetArticlesAsync(feed.Feed);
+
+        var articleIds = articles.Select(x => x.Id).ToArray();
+
+        var mappedIds = await _storageProvider.GetOrCreateArticlesAsync(feed.Id, articleIds);
+
+        var mapped = new List<MappedArticle>(articleIds.Length);
+        foreach (var article in articles)
+        {
+            mapped.Add(new MappedArticle
+            {
+                Id = mappedIds.Single(x => x.Key == article.Id).Value,
+                Article = article,
+            });
+        }
+
+        return mapped;
+    }
+
     async Task<IReadOnlyCollection<MappedFeed>> ISourceManager.GetFeedsAsync(MappedSource source)
     {
         var feeds = await source.Source.GetFeedsAsync();

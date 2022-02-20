@@ -3,25 +3,29 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 using NReader.Abstractions;
+using NReader.Core;
 
 namespace NReader.Blazor.Pages
 {
     public partial class Index
     {
+        [Inject]
+        private ISourceManager SourceManager { get; set; }
+
         [CascadingParameter(Name = "SelectedSource")]
-        private Source SelectedSource { get; set; }
+        private MappedSource SelectedSource { get; set; }
 
         [CascadingParameter(Name = "SelectedFeed")]
-        private Feed SelectedFeed { get; set; }
+        private MappedFeed SelectedFeed { get; set; }
 
         [CascadingParameter(Name = "SelectedArticle")]
         private Article SelectedArticle { get; set; }
 
-        private IReadOnlyCollection<Article> _articles;
+        private IReadOnlyCollection<MappedArticle> _articles;
 
-        private async Task HandleArticleSelectedAsync(Article article)
+        private async Task HandleArticleSelectedAsync(MappedArticle article)
         {
-            SelectedArticle = await SelectedSource.GetArticleAsync(article);
+            SelectedArticle = await SelectedSource.Source.GetArticleAsync(article.Article);
         }
 
         protected override async Task OnParametersSetAsync()
@@ -30,7 +34,7 @@ namespace NReader.Blazor.Pages
 
             if (SelectedFeed != null)
             {
-                _articles = await SelectedSource.GetArticlesAsync(SelectedFeed);
+                _articles = await SourceManager.GetArticlesAsync(SelectedSource, SelectedFeed);
             }
         }
     }

@@ -28,10 +28,12 @@ create table feed(
 
 create table article(
     id integer primary key,
+    identifier text not null,
     created_at_utc text not null,
     updated_at_utc text,
     feed_id integer not null,
-    foreign key(feed_id) references feed(id)
+    foreign key(feed_id) references feed(id),
+    constraint ux_article_identifier_feed_id unique (identifier, feed_id)
 );
 
 create table history(

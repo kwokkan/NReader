@@ -39,7 +39,7 @@ else if (SelectedFeed != null)
                 <li @onclick="() => HandleArticleSelectedAsync(article)"
                     @onclick:preventDefault
                     @onclick:stopPropagation>
-                    @article.Title
+                    @article.Article.Title
                 </li>
             }
         </ul>
