@@ -14,9 +14,9 @@ public interface IStorageProvider
 
     Task<IReadOnlyCollection<StoredSource>> StoreSourcesAsync(IEnumerable<Source> sources);
 
-    Task<IDictionary<string, long>> GetOrCreateFeedsAsync(IStoredKey storeId, IEnumerable<string> feedIds);
+    Task<IReadOnlyCollection<StoredFeed>> GetOrCreateFeedsAsync(IStoredKey storeId, IEnumerable<Feed> feeds);
 
-    Task<IDictionary<string, long>> GetOrCreateArticlesAsync(long feedId, IEnumerable<string> articleIds);
+    Task<IDictionary<string, long>> GetOrCreateArticlesAsync(IStoredKey feedId, IEnumerable<string> articleIds);
 
     Task ReadArticlesAsync(string userId, IEnumerable<string> articleIds);
 }
