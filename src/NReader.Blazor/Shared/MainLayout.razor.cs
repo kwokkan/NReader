@@ -1,15 +1,16 @@
 ﻿using System.Threading.Tasks;
 using NReader.Core;
+using NReader.Storage.Abstractions;
 
 namespace NReader.Blazor.Shared
 {
     public partial class MainLayout
     {
-        private MappedSource _selectedSource;
+        private StoredSource _selectedSource;
         private MappedFeed _selectedFeed;
         private MappedArticle _selectedArticle;
 
-        private Task HandleOnSourceSelectedAsync(MappedSource source)
+        private Task HandleOnSourceSelectedAsync(StoredSource source)
         {
             _selectedSource = source;
             _selectedArticle = null;

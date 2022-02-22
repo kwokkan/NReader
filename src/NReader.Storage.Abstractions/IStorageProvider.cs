@@ -1,4 +1,6 @@
-﻿namespace NReader.Storage.Abstractions;
+﻿using NReader.Abstractions;
+
+namespace NReader.Storage.Abstractions;
 
 public interface IStorageProvider
 {
@@ -10,9 +12,9 @@ public interface IStorageProvider
     /// <returns></returns>
     Task InitialiseAsync();
 
-    Task<IDictionary<string, long>> GetOrCreateSourcesAsync(IEnumerable<string> sourceIds);
+    Task<IReadOnlyCollection<StoredSource>> StoreSourcesAsync(IEnumerable<Source> sources);
 
-    Task<IDictionary<string, long>> GetOrCreateFeedsAsync(long sourceId, IEnumerable<string> feedIds);
+    Task<IDictionary<string, long>> GetOrCreateFeedsAsync(IStoredKey storeId, IEnumerable<string> feedIds);
 
     Task<IDictionary<string, long>> GetOrCreateArticlesAsync(long feedId, IEnumerable<string> articleIds);
 

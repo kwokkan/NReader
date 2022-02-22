@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using NReader.Abstractions;
 using NReader.Core;
+using NReader.Storage.Abstractions;
 
 namespace NReader.Blazor.Shared
 {
@@ -12,7 +12,7 @@ namespace NReader.Blazor.Shared
         private ISourceManager SourceManager { get; set; }
 
         [Parameter]
-        public EventCallback<MappedSource> OnSourceSelected { get; set; }
+        public EventCallback<StoredSource> OnSourceSelected { get; set; }
 
         [Parameter]
         public EventCallback<MappedFeed> OnFeedSelected { get; set; }
@@ -24,14 +24,14 @@ namespace NReader.Blazor.Shared
 
         private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-        private IEnumerable<MappedSource> _sources;
+        private IEnumerable<StoredSource> _sources;
 
         private void ToggleNavMenu()
         {
             collapseNavMenu = !collapseNavMenu;
         }
 
-        private async Task HandleOnSourceSelectedAsync(MappedSource source)
+        private async Task HandleOnSourceSelectedAsync(StoredSource source)
         {
             await OnSourceSelected.InvokeAsync(source);
         }

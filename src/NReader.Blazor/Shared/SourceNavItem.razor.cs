@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using NReader.Core;
+using NReader.Storage.Abstractions;
 
 namespace NReader.Blazor.Shared
 {
@@ -11,7 +12,7 @@ namespace NReader.Blazor.Shared
         private ISourceManager SourceManager { get; set; }
 
         [Parameter]
-        public EventCallback<MappedSource> OnSourceSelected { get; set; }
+        public EventCallback<StoredSource> OnSourceSelected { get; set; }
 
         [Parameter]
         public EventCallback<MappedFeed> OnFeedSelected { get; set; }
@@ -20,7 +21,7 @@ namespace NReader.Blazor.Shared
         public EventCallback<MappedArticle> OnArticleSelected { get; set; }
 
         [Parameter]
-        public MappedSource Source { get; set; }
+        public StoredSource Source { get; set; }
 
         private IReadOnlyCollection<MappedFeed> _feeds;
 
@@ -29,7 +30,7 @@ namespace NReader.Blazor.Shared
             _feeds = await SourceManager.GetFeedsAsync(Source);
         }
 
-        private async Task HandleOnSourceSelectedAsync(MappedSource source)
+        private async Task HandleOnSourceSelectedAsync(StoredSource source)
         {
             await OnSourceSelected.InvokeAsync(source);
         }

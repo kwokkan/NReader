@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using NReader.Blazor.Constants;
 using NReader.Core;
+using NReader.Storage.Abstractions;
 
 namespace NReader.Blazor.Pages
 {
@@ -12,7 +13,7 @@ namespace NReader.Blazor.Pages
         private ISourceManager SourceManager { get; set; }
 
         [CascadingParameter(Name = "SelectedSource")]
-        private MappedSource SelectedSource { get; set; }
+        private StoredSource SelectedSource { get; set; }
 
         [CascadingParameter(Name = "SelectedFeed")]
         private MappedFeed SelectedFeed { get; set; }
