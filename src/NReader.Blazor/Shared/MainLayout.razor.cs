@@ -7,7 +7,7 @@ namespace NReader.Blazor.Shared
     public partial class MainLayout
     {
         private StoredSource _selectedSource;
-        private MappedFeed _selectedFeed;
+        private StoredFeed _selectedFeed;
         private MappedArticle _selectedArticle;
 
         private Task HandleOnSourceSelectedAsync(StoredSource source)
@@ -18,7 +18,7 @@ namespace NReader.Blazor.Shared
             return Task.CompletedTask;
         }
 
-        private Task HandleOnFeedSelectedAsync(MappedFeed feed)
+        private Task HandleOnFeedSelectedAsync(StoredFeed feed)
         {
             _selectedFeed = feed;
 

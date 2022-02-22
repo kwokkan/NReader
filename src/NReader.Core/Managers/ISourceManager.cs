@@ -8,11 +8,11 @@ public interface ISourceManager
 {
     Task<IReadOnlyCollection<StoredSource>> GetAllSourcesAsync();
 
-    Task<IReadOnlyCollection<MappedFeed>> GetFeedsAsync(StoredSource source);
+    Task<IReadOnlyCollection<StoredFeed>> GetFeedsAsync(StoredSource source);
 
     Task<MappedArticle> GetArticleAsync(StoredSource source, MappedArticle article);
 
-    Task<IReadOnlyCollection<MappedArticle>> GetArticlesAsync(StoredSource source, MappedFeed feed);
+    Task<IReadOnlyCollection<MappedArticle>> GetArticlesAsync(StoredSource source, StoredFeed feed);
 
     Task ReadArticlesAsync(string userId, IEnumerable<MappedArticle> articles);
 }

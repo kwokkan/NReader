@@ -16,7 +16,7 @@ namespace NReader.Blazor.Pages
         private StoredSource SelectedSource { get; set; }
 
         [CascadingParameter(Name = "SelectedFeed")]
-        private MappedFeed SelectedFeed { get; set; }
+        private StoredFeed SelectedFeed { get; set; }
 
         [CascadingParameter(Name = "SelectedArticle")]
         private MappedArticle SelectedArticle { get; set; }

@@ -88,7 +88,7 @@ public class SqliteStorageProvider : IStorageProvider
         return stored;
     }
 
-    async Task<IDictionary<string, long>> IStorageProvider.GetOrCreateFeedsAsync(IStoredKey sourceId, IEnumerable<string> feedIds)
+    async Task<IReadOnlyCollection<StoredFeed>> IStorageProvider.GetOrCreateFeedsAsync(IStoredKey sourceId, IEnumerable<Feed> feeds)
     {
         var sourceKey = ((SqliteStoredKey)sourceId).Key;
 
@@ -115,9 +115,9 @@ public class SqliteStorageProvider : IStorageProvider
 
         await insertCommand.PrepareAsync();
 
-        foreach (var feedId in feedIds)
+        foreach (var feed in feeds)
         {
-            identifierParam.Value = feedId;
+            identifierParam.Value = feed.Id;
             await insertCommand.ExecuteNonQueryAsync();
         }
 
@@ -138,11 +138,25 @@ public class SqliteStorageProvider : IStorageProvider
 
         await transaction.CommitAsync();
 
-        return mapped;
+        var stored = new List<StoredFeed>(mapped.Count);
+
+        foreach (var feed in feeds)
+        {
+            stored.Add(
+                new StoredFeed(
+                    new SqliteStoredKey(mapped.First(x => x.Key == feed.Id).Value),
+                    feed
+                )
+            );
+        }
+
+        return stored;
     }
 
-    async Task<IDictionary<string, long>> IStorageProvider.GetOrCreateArticlesAsync(long feedId, IEnumerable<string> articleIds)
+    async Task<IDictionary<string, long>> IStorageProvider.GetOrCreateArticlesAsync(IStoredKey feedId, IEnumerable<string> articleIds)
     {
+        var feedKey = ((SqliteStoredKey)feedId).Key;
+
         await using var connection = CreateConnection();
 
         await connection.OpenAsync();
@@ -158,7 +172,7 @@ public class SqliteStorageProvider : IStorageProvider
 
         var now = DateTime.UtcNow;
         insertCommand.Parameters.AddWithValue("@now", now);
-        insertCommand.Parameters.AddWithValue("@feedId", feedId);
+        insertCommand.Parameters.AddWithValue("@feedId", feedKey);
 
         var identifierParam = insertCommand.CreateParameter();
         identifierParam.ParameterName = "@identifier";
@@ -174,7 +188,7 @@ public class SqliteStorageProvider : IStorageProvider
 
         await using var reader = await connection.ExecuteReaderAsync(
             $"select a.id, a.identifier from article a inner join {tempTableName} t on t.identifier = a.identifier and a.feed_id = @feedId;",
-            new SqliteParameter("@feedId", feedId));
+            new SqliteParameter("@feedId", feedKey));
 
         var mapped = new Dictionary<string, long>();
 

@@ -15,7 +15,7 @@ namespace NReader.Blazor.Shared
         public EventCallback<StoredSource> OnSourceSelected { get; set; }
 
         [Parameter]
-        public EventCallback<MappedFeed> OnFeedSelected { get; set; }
+        public EventCallback<StoredFeed> OnFeedSelected { get; set; }
 
         [Parameter]
         public EventCallback<MappedArticle> OnArticleSelected { get; set; }
@@ -23,7 +23,7 @@ namespace NReader.Blazor.Shared
         [Parameter]
         public StoredSource Source { get; set; }
 
-        private IReadOnlyCollection<MappedFeed> _feeds;
+        private IReadOnlyCollection<StoredFeed> _feeds;
 
         protected override async Task OnInitializedAsync()
         {
@@ -35,7 +35,7 @@ namespace NReader.Blazor.Shared
             await OnSourceSelected.InvokeAsync(source);
         }
 
-        private async Task HandleOnFeedSelectedAsync(MappedFeed feed)
+        private async Task HandleOnFeedSelectedAsync(StoredFeed feed)
         {
             await OnFeedSelected.InvokeAsync(feed);
         }
