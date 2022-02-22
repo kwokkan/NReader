@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NReader.Abstractions\NReader.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

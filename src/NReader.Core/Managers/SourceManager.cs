@@ -16,28 +16,16 @@ public class SourceManager : ISourceManager
         _storageProvider = storageProvider;
     }
 
-    async Task<IEnumerable<MappedSource>> ISourceManager.GetAllSourcesAsync()
+    async Task<IReadOnlyCollection<StoredSource>> ISourceManager.GetAllSourcesAsync()
     {
         var sources = await _sourceService.GetSourcesAsync();
 
-        var sourceIds = sources.Select(x => x.Url.ToString()).ToArray();
+        var storedSources = await _storageProvider.StoreSourcesAsync(sources);
 
-        var mappedIds = await _storageProvider.GetOrCreateSourcesAsync(sourceIds);
-
-        var mapped = new List<MappedSource>(sourceIds.Length);
-        foreach (var source in sources)
-        {
-            mapped.Add(new MappedSource
-            {
-                Id = mappedIds.Single(x => x.Key == source.Url.ToString()).Value,
-                Source = source,
-            });
-        }
-
-        return mapped;
+        return storedSources;
     }
 
-    async Task<MappedArticle> ISourceManager.GetArticleAsync(MappedSource source, MappedArticle article)
+    async Task<MappedArticle> ISourceManager.GetArticleAsync(StoredSource source, MappedArticle article)
     {
         var newArticle = await source.Source.GetArticleAsync(article.Article);
 
@@ -48,7 +36,7 @@ public class SourceManager : ISourceManager
         };
     }
 
-    async Task<IReadOnlyCollection<MappedArticle>> ISourceManager.GetArticlesAsync(MappedSource source, MappedFeed feed)
+    async Task<IReadOnlyCollection<MappedArticle>> ISourceManager.GetArticlesAsync(StoredSource source, MappedFeed feed)
     {
         var articles = await source.Source.GetArticlesAsync(feed.Feed);
 
@@ -69,13 +57,13 @@ public class SourceManager : ISourceManager
         return mapped;
     }
 
-    async Task<IReadOnlyCollection<MappedFeed>> ISourceManager.GetFeedsAsync(MappedSource source)
+    async Task<IReadOnlyCollection<MappedFeed>> ISourceManager.GetFeedsAsync(StoredSource source)
     {
         var feeds = await source.Source.GetFeedsAsync();
 
         var feedIds = feeds.Select(x => x.Id).ToArray();
 
-        var mappedIds = await _storageProvider.GetOrCreateFeedsAsync(source.Id, feedIds);
+        var mappedIds = await _storageProvider.GetOrCreateFeedsAsync(source.Key, feedIds);
 
         var mapped = new List<MappedFeed>(feedIds.Length);
         foreach (var feed in feeds)
