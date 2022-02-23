@@ -18,7 +18,7 @@ namespace NReader.Blazor.Shared
         public EventCallback<StoredFeed> OnFeedSelected { get; set; }
 
         [Parameter]
-        public EventCallback<MappedArticle> OnArticleSelected { get; set; }
+        public EventCallback<StoredArticle> OnArticleSelected { get; set; }
 
         private bool collapseNavMenu = true;
 
@@ -41,7 +41,7 @@ namespace NReader.Blazor.Shared
             await OnFeedSelected.InvokeAsync(feed);
         }
 
-        private async Task HandleOnArticleSelectedAsync(MappedArticle article)
+        private async Task HandleOnArticleSelectedAsync(StoredArticle article)
         {
             await OnArticleSelected.InvokeAsync(article);
         }

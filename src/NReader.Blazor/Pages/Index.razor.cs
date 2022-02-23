@@ -19,11 +19,11 @@ namespace NReader.Blazor.Pages
         private StoredFeed SelectedFeed { get; set; }
 
         [CascadingParameter(Name = "SelectedArticle")]
-        private MappedArticle SelectedArticle { get; set; }
+        private StoredArticle SelectedArticle { get; set; }
 
-        private IReadOnlyCollection<MappedArticle> _articles;
+        private IReadOnlyCollection<StoredArticle> _articles;
 
-        private async Task HandleArticleSelectedAsync(MappedArticle article)
+        private async Task HandleArticleSelectedAsync(StoredArticle article)
         {
             SelectedArticle = await SourceManager.GetArticleAsync(SelectedSource, article);
 

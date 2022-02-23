@@ -25,36 +25,20 @@ public class SourceManager : ISourceManager
         return storedSources;
     }
 
-    async Task<MappedArticle> ISourceManager.GetArticleAsync(StoredSource source, MappedArticle article)
+    async Task<StoredArticle> ISourceManager.GetArticleAsync(StoredSource source, StoredArticle article)
     {
         var newArticle = await source.Source.GetArticleAsync(article.Article);
 
-        return new MappedArticle
-        {
-            Id = article.Id,
-            Article = newArticle
-        };
+        return new StoredArticle(article.Key, newArticle);
     }
 
-    async Task<IReadOnlyCollection<MappedArticle>> ISourceManager.GetArticlesAsync(StoredSource source, StoredFeed feed)
+    async Task<IReadOnlyCollection<StoredArticle>> ISourceManager.GetArticlesAsync(StoredSource source, StoredFeed feed)
     {
         var articles = await source.Source.GetArticlesAsync(feed.Feed);
 
-        var articleIds = articles.Select(x => x.Id).ToArray();
+        var storedArticles = await _storageProvider.StoreArticlesAsync(feed.Key, articles);
 
-        var mappedIds = await _storageProvider.GetOrCreateArticlesAsync(feed.Key, articleIds);
-
-        var mapped = new List<MappedArticle>(articleIds.Length);
-        foreach (var article in articles)
-        {
-            mapped.Add(new MappedArticle
-            {
-                Id = mappedIds.Single(x => x.Key == article.Id).Value,
-                Article = article,
-            });
-        }
-
-        return mapped;
+        return storedArticles;
     }
 
     async Task<IReadOnlyCollection<StoredFeed>> ISourceManager.GetFeedsAsync(StoredSource source)
@@ -66,7 +50,7 @@ public class SourceManager : ISourceManager
         return storedFeeds;
     }
 
-    async Task ISourceManager.ReadArticlesAsync(string userId, IEnumerable<MappedArticle> articles)
+    async Task ISourceManager.ReadArticlesAsync(string userId, IEnumerable<StoredArticle> articles)
     {
         var articleIds = articles.Select(x => x.Article.Id).ToArray();
 

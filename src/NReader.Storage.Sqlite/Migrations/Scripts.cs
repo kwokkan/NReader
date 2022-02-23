@@ -7,5 +7,6 @@ internal static class Scripts
     internal static readonly IReadOnlyList<string> Migrations = new string[]
     {
         V1.Sql,
+        V2.Sql,
     };
 }
