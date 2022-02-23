@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Text.Json;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using NReader.Abstractions;
 using NReader.Storage.Abstractions;
@@ -153,7 +154,7 @@ public class SqliteStorageProvider : IStorageProvider
         return stored;
     }
 
-    async Task<IDictionary<string, long>> IStorageProvider.GetOrCreateArticlesAsync(IStoredKey feedId, IEnumerable<string> articleIds)
+    async Task<IReadOnlyCollection<StoredArticle>> IStorageProvider.StoreArticlesAsync(IStoredKey feedId, IEnumerable<Article> articles)
     {
         var feedKey = ((SqliteStoredKey)feedId).Key;
 
@@ -168,7 +169,11 @@ public class SqliteStorageProvider : IStorageProvider
         await connection.ExecuteNonQueryAsync($"create temp table {tempTableName} (identifier text unique not null);");
 
         var insertCommand = connection.CreateCommand();
-        insertCommand.CommandText = $"insert or ignore into article (identifier, created_at_utc, feed_id) values (@identifier, @now, @feedId); insert into {tempTableName} values (@identifier);";
+        insertCommand.CommandText = @$"
+insert or ignore into article (identifier, created_at_utc, feed_id, json_content) 
+values (@identifier, @now, @feedId, @jsonContent);
+
+insert into {tempTableName} values (@identifier);";
 
         var now = DateTime.UtcNow;
         insertCommand.Parameters.AddWithValue("@now", now);
@@ -178,11 +183,16 @@ public class SqliteStorageProvider : IStorageProvider
         identifierParam.ParameterName = "@identifier";
         insertCommand.Parameters.Add(identifierParam);
 
+        var jsonContentParam = insertCommand.CreateParameter();
+        jsonContentParam.ParameterName = "@jsonContent";
+        insertCommand.Parameters.Add(jsonContentParam) ;
+
         await insertCommand.PrepareAsync();
 
-        foreach (var articleId in articleIds)
+        foreach (var article in articles)
         {
-            identifierParam.Value = articleId;
+            identifierParam.Value = article.Id;
+            jsonContentParam.Value = JsonSerializer.Serialize(article);
             await insertCommand.ExecuteNonQueryAsync();
         }
 
@@ -202,7 +212,19 @@ public class SqliteStorageProvider : IStorageProvider
 
         await transaction.CommitAsync();
 
-        return mapped;
+        var stored = new List<StoredArticle>(mapped.Count);
+
+        foreach (var article in articles)
+        {
+            stored.Add(
+                new StoredArticle(
+                    new SqliteStoredKey(mapped.First(x => x.Key == article.Id).Value),
+                    article
+                )
+            );
+        }
+
+        return stored;
     }
 
     async Task IStorageProvider.ReadArticlesAsync(string userId, IEnumerable<string> articleIds)
