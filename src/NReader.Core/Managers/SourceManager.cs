@@ -45,7 +45,7 @@ public class SourceManager : ISourceManager
     {
         var feeds = await source.Source.GetFeedsAsync();
 
-        var storedFeeds = await _storageProvider.GetOrCreateFeedsAsync(source.Id, feeds);
+        var storedFeeds = await _storageProvider.StoreFeedsAsync(source.Id, feeds);
 
         return storedFeeds;
     }
