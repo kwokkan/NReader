@@ -80,7 +80,7 @@ public class SqliteStorageProvider : IStorageProvider
         {
             stored.Add(
                 new StoredSource(
-                    new SqliteStoredKey(mapped.First(x => x.Key == source.Url.ToString()).Value),
+                    new SqliteStoredSourceId(mapped.First(x => x.Key == source.Url.ToString()).Value),
                     source
                 )
             );
@@ -89,9 +89,9 @@ public class SqliteStorageProvider : IStorageProvider
         return stored;
     }
 
-    async Task<IReadOnlyCollection<StoredFeed>> IStorageProvider.GetOrCreateFeedsAsync(IStoredKey sourceId, IEnumerable<Feed> feeds)
+    async Task<IReadOnlyCollection<StoredFeed>> IStorageProvider.GetOrCreateFeedsAsync(IStoredSourceId sourceId, IEnumerable<Feed> feeds)
     {
-        var sourceKey = ((SqliteStoredKey)sourceId).Key;
+        var sourceKey = ((SqliteStoredIdBase)sourceId).Key;
 
         await using var connection = CreateConnection();
 
@@ -145,7 +145,7 @@ public class SqliteStorageProvider : IStorageProvider
         {
             stored.Add(
                 new StoredFeed(
-                    new SqliteStoredKey(mapped.First(x => x.Key == feed.Id).Value),
+                    new SqliteStoredFeedId(mapped.First(x => x.Key == feed.Id).Value),
                     feed
                 )
             );
@@ -154,9 +154,9 @@ public class SqliteStorageProvider : IStorageProvider
         return stored;
     }
 
-    async Task<IReadOnlyCollection<StoredArticle>> IStorageProvider.StoreArticlesAsync(IStoredKey feedId, IEnumerable<Article> articles)
+    async Task<IReadOnlyCollection<StoredArticle>> IStorageProvider.StoreArticlesAsync(IStoredFeedId feedId, IEnumerable<Article> articles)
     {
-        var feedKey = ((SqliteStoredKey)feedId).Key;
+        var feedKey = ((SqliteStoredIdBase)feedId).Key;
 
         await using var connection = CreateConnection();
 
@@ -218,7 +218,7 @@ insert into {tempTableName} values (@identifier);";
         {
             stored.Add(
                 new StoredArticle(
-                    new SqliteStoredKey(mapped.First(x => x.Key == article.Id).Value),
+                    new SqliteStoredArticleId(mapped.First(x => x.Key == article.Id).Value),
                     article
                 )
             );
