@@ -89,7 +89,7 @@ public class SqliteStorageProvider : IStorageProvider
         return stored;
     }
 
-    async Task<IReadOnlyCollection<StoredFeed>> IStorageProvider.GetOrCreateFeedsAsync(IStoredSourceId sourceId, IEnumerable<Feed> feeds)
+    async Task<IReadOnlyCollection<StoredFeed>> IStorageProvider.StoreFeedsAsync(IStoredSourceId sourceId, IEnumerable<Feed> feeds)
     {
         var sourceKey = ((SqliteStoredIdBase)sourceId).Key;
 
