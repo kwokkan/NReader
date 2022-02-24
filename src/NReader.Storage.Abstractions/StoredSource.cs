@@ -4,13 +4,13 @@ namespace NReader.Storage.Abstractions;
 
 public class StoredSource
 {
-    public IStoredKey Key { get; init; }
+    public IStoredSourceId Id { get; init; }
 
     public Source Source { get; init; }
 
-    public StoredSource(IStoredKey key, Source source)
+    public StoredSource(IStoredSourceId id, Source source)
     {
-        Key = key;
+        Id = id;
         Source = source;
     }
 }

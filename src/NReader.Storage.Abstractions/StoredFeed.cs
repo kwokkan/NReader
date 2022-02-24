@@ -4,13 +4,13 @@ namespace NReader.Storage.Abstractions;
 
 public class StoredFeed
 {
-    public IStoredKey Key { get; init; }
+    public IStoredFeedId Id { get; init; }
 
     public Feed Feed { get; init; }
 
-    public StoredFeed(IStoredKey key, Feed feed)
+    public StoredFeed(IStoredFeedId id, Feed feed)
     {
-        Key = key;
+        Id = id;
         Feed = feed;
     }
 }

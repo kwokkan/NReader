@@ -1,6 +1,6 @@
 ﻿namespace NReader.Storage.Abstractions;
 
-public interface IStoredKey
+public interface IStoredFeedId
 {
     string Value { get; }
 }

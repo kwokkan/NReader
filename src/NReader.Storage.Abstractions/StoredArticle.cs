@@ -4,13 +4,13 @@ namespace NReader.Storage.Abstractions;
 
 public class StoredArticle
 {
-    public IStoredKey Key { get; init; }
+    public IStoredArticleId Id { get; init; }
 
     public Article Article { get; init; }
 
-    public StoredArticle(IStoredKey key, Article article)
+    public StoredArticle(IStoredArticleId id, Article article)
     {
-        Key = key;
+        Id = id;
         Article = article;
     }
 }

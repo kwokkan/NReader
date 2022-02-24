@@ -29,14 +29,14 @@ public class SourceManager : ISourceManager
     {
         var newArticle = await source.Source.GetArticleAsync(article.Article);
 
-        return new StoredArticle(article.Key, newArticle);
+        return new StoredArticle(article.Id, newArticle);
     }
 
     async Task<IReadOnlyCollection<StoredArticle>> ISourceManager.GetArticlesAsync(StoredSource source, StoredFeed feed)
     {
         var articles = await source.Source.GetArticlesAsync(feed.Feed);
 
-        var storedArticles = await _storageProvider.StoreArticlesAsync(feed.Key, articles);
+        var storedArticles = await _storageProvider.StoreArticlesAsync(feed.Id, articles);
 
         return storedArticles;
     }
@@ -45,7 +45,7 @@ public class SourceManager : ISourceManager
     {
         var feeds = await source.Source.GetFeedsAsync();
 
-        var storedFeeds = await _storageProvider.GetOrCreateFeedsAsync(source.Key, feeds);
+        var storedFeeds = await _storageProvider.GetOrCreateFeedsAsync(source.Id, feeds);
 
         return storedFeeds;
     }
