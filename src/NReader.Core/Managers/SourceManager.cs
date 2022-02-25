@@ -32,11 +32,20 @@ public class SourceManager : ISourceManager
         return new StoredArticle(article.Id, newArticle);
     }
 
-    async Task<IReadOnlyCollection<StoredArticle>> ISourceManager.GetArticlesAsync(StoredSource source, StoredFeed feed)
+    async Task<IReadOnlyCollection<StoredArticle>> ISourceManager.GetArticlesAsync(StoredSource source, StoredFeed feed, bool refresh)
     {
-        var articles = await source.Source.GetArticlesAsync(feed.Feed);
+        IReadOnlyCollection<StoredArticle> storedArticles;
 
-        var storedArticles = await _storageProvider.StoreArticlesAsync(feed.Id, articles);
+        if (refresh)
+        {
+            var articles = await source.Source.GetArticlesAsync(feed.Feed);
+
+            storedArticles = await _storageProvider.StoreArticlesAsync(feed.Id, articles);
+        }
+        else
+        {
+            storedArticles = await _storageProvider.GetArticlesAsync(feed.Id);
+        }
 
         return storedArticles;
     }
