@@ -30,13 +30,18 @@ namespace NReader.Blazor.Pages
             await SourceManager.ReadArticlesAsync(AuthenticationConstants.UserId, new[] { SelectedArticle });
         }
 
+        private async Task HandleRefreshArticlesAsync()
+        {
+            _articles = await SourceManager.GetArticlesAsync(SelectedSource, SelectedFeed, true);
+        }
+
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
 
             if (SelectedFeed != null)
             {
-                _articles = await SourceManager.GetArticlesAsync(SelectedSource, SelectedFeed);
+                _articles = await SourceManager.GetArticlesAsync(SelectedSource, SelectedFeed, false);
             }
         }
     }

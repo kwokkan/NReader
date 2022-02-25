@@ -227,6 +227,47 @@ insert into {tempTableName} values (@identifier);";
         return stored;
     }
 
+    async Task<IReadOnlyCollection<StoredArticle>> IStorageProvider.GetArticlesAsync(IStoredFeedId feedId)
+    {
+        var feedKey = ((SqliteStoredIdBase)feedId).Key;
+
+        await using var connection = CreateConnection();
+
+        await connection.OpenAsync();
+
+        await using var transaction = await connection.BeginTransactionAsync();
+
+        await using var reader = await connection.ExecuteReaderAsync(
+            $"select a.id, json_content from article a where a.feed_id = @feedId order by a.created_at_utc desc;",
+            new SqliteParameter("@feedId", feedKey));
+
+        var mapped = new Dictionary<long, string>();
+
+        while (await reader.ReadAsync())
+        {
+            var newId = reader.GetInt64(0);
+            var json = reader.GetString(1);
+
+            mapped.Add(newId, json);
+        }
+
+        await transaction.CommitAsync();
+
+        var stored = new List<StoredArticle>(mapped.Count);
+
+        foreach (var map in mapped)
+        {
+            stored.Add(
+                new StoredArticle(
+                    new SqliteStoredArticleId(map.Key),
+                    JsonSerializer.Deserialize<Article>(map.Value)
+                )
+            );
+        }
+
+        return stored;
+    }
+
     async Task IStorageProvider.ReadArticlesAsync(string userId, IEnumerable<string> articleIds)
     {
         await using var connection = CreateConnection();

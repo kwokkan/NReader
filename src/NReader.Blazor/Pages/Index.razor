@@ -31,6 +31,17 @@
 }
 else if (SelectedFeed != null)
 {
+    <div class="btn-group">
+        <button
+            class="btn btn-primary"
+            @onclick="HandleRefreshArticlesAsync"
+            @onclick:preventDefault
+            @onclick:stopPropagation
+        >
+            Refresh
+        </button>
+    </div>
+
     if (_articles != null)
     {
         <ul>
