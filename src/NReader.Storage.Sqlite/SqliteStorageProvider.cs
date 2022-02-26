@@ -227,9 +227,10 @@ insert into {tempTableName} values (@identifier);";
         return stored;
     }
 
-    async Task<IReadOnlyCollection<StoredArticle>> IStorageProvider.GetArticlesAsync(IStoredFeedId feedId)
+    async Task<IReadOnlyCollection<StoredArticle>> IStorageProvider.GetArticlesAsync(IStoredFeedId feedId, GetArticlesSearchFilter? filter)
     {
         var feedKey = ((SqliteStoredIdBase)feedId).Key;
+        long? userKey = null;
 
         await using var connection = CreateConnection();
 
@@ -237,19 +238,17 @@ insert into {tempTableName} values (@identifier);";
 
         await using var transaction = await connection.BeginTransactionAsync();
 
-        await using var reader = await connection.ExecuteReaderAsync(
-            $"select a.id, json_content from article a where a.feed_id = @feedId order by a.created_at_utc desc;",
-            new SqliteParameter("@feedId", feedKey));
-
-        var mapped = new Dictionary<long, string>();
-
-        while (await reader.ReadAsync())
+        if (!string.IsNullOrWhiteSpace(filter?.UserId))
         {
-            var newId = reader.GetInt64(0);
-            var json = reader.GetString(1);
-
-            mapped.Add(newId, json);
+            userKey = await GetOrCreateUserId(connection, filter.UserId);
         }
+
+        var mapped = await new GetArticlesCommand().ExecuteAsync(
+            connection,
+            feedKey,
+            userKey,
+            filter?.Unread
+        );
 
         await transaction.CommitAsync();
 
@@ -268,7 +267,7 @@ insert into {tempTableName} values (@identifier);";
         return stored;
     }
 
-    async Task IStorageProvider.ReadArticlesAsync(string userId, IEnumerable<string> articleIds)
+    async Task IStorageProvider.ReadArticlesAsync(string userId, IEnumerable<IStoredArticleId> articleIds)
     {
         await using var connection = CreateConnection();
 
@@ -293,7 +292,7 @@ insert into {tempTableName} values (@identifier);";
 
         foreach (var articleId in articleIds)
         {
-            articleParam.Value = articleId;
+            articleParam.Value = ((SqliteStoredArticleId)articleId).Key;
 
             await command.ExecuteNonQueryAsync();
         }
