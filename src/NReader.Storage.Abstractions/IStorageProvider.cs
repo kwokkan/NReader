@@ -18,7 +18,7 @@ public interface IStorageProvider
 
     Task<IReadOnlyCollection<StoredArticle>> StoreArticlesAsync(IStoredFeedId feedId, IEnumerable<Article> articles);
 
-    Task<IReadOnlyCollection<StoredArticle>> GetArticlesAsync(IStoredFeedId feedId);
+    Task<IReadOnlyCollection<StoredArticle>> GetArticlesAsync(IStoredFeedId feedId, GetArticlesSearchFilter? filter = default);
 
-    Task ReadArticlesAsync(string userId, IEnumerable<string> articleIds);
+    Task ReadArticlesAsync(string userId, IEnumerable<IStoredArticleId> articleIds);
 }

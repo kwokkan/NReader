@@ -12,7 +12,7 @@ public interface ISourceManager
 
     Task<StoredArticle> GetArticleAsync(StoredSource source, StoredArticle article);
 
-    Task<IReadOnlyCollection<StoredArticle>> GetArticlesAsync(StoredSource source, StoredFeed feed, bool refresh);
+    Task<IReadOnlyCollection<StoredArticle>> GetArticlesAsync(StoredSource source, StoredFeed feed, bool refresh, string userId, bool? unread = null);
 
     Task ReadArticlesAsync(string userId, IEnumerable<StoredArticle> articles);
 }

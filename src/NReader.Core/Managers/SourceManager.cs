@@ -32,7 +32,7 @@ public class SourceManager : ISourceManager
         return new StoredArticle(article.Id, newArticle);
     }
 
-    async Task<IReadOnlyCollection<StoredArticle>> ISourceManager.GetArticlesAsync(StoredSource source, StoredFeed feed, bool refresh)
+    async Task<IReadOnlyCollection<StoredArticle>> ISourceManager.GetArticlesAsync(StoredSource source, StoredFeed feed, bool refresh, string userId, bool? unread)
     {
         IReadOnlyCollection<StoredArticle> storedArticles;
 
@@ -44,7 +44,13 @@ public class SourceManager : ISourceManager
         }
         else
         {
-            storedArticles = await _storageProvider.GetArticlesAsync(feed.Id);
+            var filter = new GetArticlesSearchFilter
+            {
+                UserId = userId,
+                Unread = unread,
+            };
+
+            storedArticles = await _storageProvider.GetArticlesAsync(feed.Id, filter: filter);
         }
 
         return storedArticles;
@@ -61,7 +67,7 @@ public class SourceManager : ISourceManager
 
     async Task ISourceManager.ReadArticlesAsync(string userId, IEnumerable<StoredArticle> articles)
     {
-        var articleIds = articles.Select(x => x.Article.Id).ToArray();
+        var articleIds = articles.Select(x => x.Id).ToArray();
 
         await _storageProvider.ReadArticlesAsync(userId, articleIds);
     }
