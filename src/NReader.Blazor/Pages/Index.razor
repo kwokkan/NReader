@@ -46,10 +46,11 @@ else if (SelectedFeed != null)
 
     if (_articles != null)
     {
-        <ul>
+        <ul class="articles">
             @foreach (var article in _articles)
             {
-                <li @onclick="() => HandleArticleSelectedAsync(article)"
+                <li class="article @(article.UserStats?.ReadCount > 0 ? "read" : "unread")"
+                    @onclick="() => HandleArticleSelectedAsync(article)"
                     @onclick:preventDefault
                     @onclick:stopPropagation>
                     @article.Article.Title

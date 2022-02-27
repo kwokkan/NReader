@@ -15,7 +15,23 @@ order by a.created_at_utc desc
 ;
 ";
 
-    internal async Task<Dictionary<long, string>> ExecuteAsync(
+    internal class ExecuteResult
+    {
+        internal long Key { get; init; }
+
+        internal string JsonContent { get; init; } = default!;
+
+        internal long ReadCount { get; init; }
+    }
+
+    internal class ExecuteReturn
+    {
+        internal IReadOnlyCollection<ExecuteResult> Results { get; init; } = default!;
+
+        internal bool HasUserStats { get; init; }
+    }
+
+    internal async Task<ExecuteReturn> ExecuteAsync(
         SqliteConnection connection,
         long feedKey,
         long? userKey,
@@ -35,6 +51,7 @@ order by a.created_at_utc desc
             new SqliteParameter("@feedId", feedKey),
         };
 
+        bool hasUserStats;
         GenerateAdditionalQuery(
             columns,
             additionalJoins,
@@ -42,7 +59,8 @@ order by a.created_at_utc desc
             groupBys,
             parameters,
             userKey,
-            unread
+            unread,
+            out hasUserStats
         );
 
         var sql = SelectSql
@@ -54,17 +72,28 @@ order by a.created_at_utc desc
 
         await using var reader = await connection.ExecuteReaderAsync(sql, parameters.ToArray());
 
-        var mapped = new Dictionary<long, string>();
+        var results = new List<ExecuteResult>();
 
         while (await reader.ReadAsync())
         {
             var newId = reader.GetInt64(0);
             var json = reader.GetString(1);
 
-            mapped.Add(newId, json);
+            var result = new ExecuteResult
+            {
+                Key = newId,
+                JsonContent = json,
+                ReadCount = hasUserStats ? reader.GetInt64(2) : default,
+            };
+
+            results.Add(result);
         }
 
-        return mapped;
+        return new ExecuteReturn
+        {
+            Results = results,
+            HasUserStats = hasUserStats,
+        };
     }
 
     private static void GenerateAdditionalQuery(
@@ -74,19 +103,27 @@ order by a.created_at_utc desc
         List<string> groupBys,
         List<SqliteParameter> additionalParameters,
         long? userKey,
-        bool? unread
+        bool? unread,
+        out bool hasUserStats
     )
     {
+        var hasUserColumns = false;
+
         if (userKey.HasValue)
         {
+            hasUserColumns = true;
+
+            groupBys.AddRange(columns);
+            columns.Add("count(h.id) as count");
+            additionalJoins.Add("left join history h on h.article_id = a.id and h.user_id = @userId");
+            additionalParameters.Add(new SqliteParameter("@userId", userKey.Value));
+
             if (unread.HasValue)
             {
-                groupBys.AddRange(columns);
-                columns.Add("count(h.id) as count");
-                additionalJoins.Add("left join history h on h.article_id = a.id and h.user_id = @userId");
                 additionalWheres.Add($"and h.id is {(unread.Value ? "" : "not ")}null");
-                additionalParameters.Add(new SqliteParameter("@userId", userKey.Value));
             }
         }
+
+        hasUserStats = hasUserColumns;
     }
 }

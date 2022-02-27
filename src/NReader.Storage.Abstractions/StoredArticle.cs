@@ -8,6 +8,8 @@ public class StoredArticle
 
     public Article Article { get; init; }
 
+    public UserStats? UserStats { get; init; }
+
     public StoredArticle(IStoredArticleId id, Article article)
     {
         Id = id;
