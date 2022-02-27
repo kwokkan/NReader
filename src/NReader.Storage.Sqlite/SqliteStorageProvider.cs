@@ -243,7 +243,7 @@ insert into {tempTableName} values (@identifier);";
             userKey = await GetOrCreateUserId(connection, filter.UserId);
         }
 
-        var mapped = await new GetArticlesCommand().ExecuteAsync(
+        var executeReturn = await new GetArticlesCommand().ExecuteAsync(
             connection,
             feedKey,
             userKey,
@@ -252,15 +252,23 @@ insert into {tempTableName} values (@identifier);";
 
         await transaction.CommitAsync();
 
-        var stored = new List<StoredArticle>(mapped.Count);
+        var stored = new List<StoredArticle>(executeReturn.Results.Count);
 
-        foreach (var map in mapped)
+        foreach (var map in executeReturn.Results)
         {
             stored.Add(
                 new StoredArticle(
                     new SqliteStoredArticleId(map.Key),
-                    JsonSerializer.Deserialize<Article>(map.Value)
+                    JsonSerializer.Deserialize<Article>(map.JsonContent)
                 )
+                {
+                    UserStats = executeReturn.HasUserStats
+                        ? new UserStats
+                        {
+                            ReadCount = map.ReadCount
+                        }
+                        : default
+                }
             );
         }
 
