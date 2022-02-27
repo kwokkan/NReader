@@ -23,6 +23,8 @@ namespace NReader.Blazor.Pages
 
         private IReadOnlyCollection<StoredArticle> _articles;
 
+        private bool? _unread = true;
+
         private async Task HandleArticleSelectedAsync(StoredArticle article)
         {
             SelectedArticle = await SourceManager.GetArticleAsync(SelectedSource, article);
@@ -32,7 +34,7 @@ namespace NReader.Blazor.Pages
 
         private async Task HandleRefreshArticlesAsync()
         {
-            _articles = await SourceManager.GetArticlesAsync(SelectedSource, SelectedFeed, true, AuthenticationConstants.UserId, unread: true);
+            _articles = await SourceManager.GetArticlesAsync(SelectedSource, SelectedFeed, true, AuthenticationConstants.UserId, unread: _unread);
         }
 
         protected override async Task OnParametersSetAsync()
@@ -41,7 +43,7 @@ namespace NReader.Blazor.Pages
 
             if (SelectedFeed != null)
             {
-                _articles = await SourceManager.GetArticlesAsync(SelectedSource, SelectedFeed, false, AuthenticationConstants.UserId, unread: true);
+                _articles = await SourceManager.GetArticlesAsync(SelectedSource, SelectedFeed, false, AuthenticationConstants.UserId, unread: _unread);
             }
         }
     }

@@ -40,18 +40,15 @@ public class SourceManager : ISourceManager
         {
             var articles = await source.Source.GetArticlesAsync(feed.Feed);
 
-            storedArticles = await _storageProvider.StoreArticlesAsync(feed.Id, articles);
+            await _storageProvider.StoreArticlesAsync(feed.Id, articles);
         }
-        else
-        {
-            var filter = new GetArticlesSearchFilter
-            {
-                UserId = userId,
-                Unread = unread,
-            };
 
-            storedArticles = await _storageProvider.GetArticlesAsync(feed.Id, filter: filter);
-        }
+        var filter = new GetArticlesSearchFilter
+        {
+            UserId = userId,
+            Unread = unread,
+        };
+        storedArticles = await _storageProvider.GetArticlesAsync(feed.Id, filter: filter);
 
         return storedArticles;
     }
