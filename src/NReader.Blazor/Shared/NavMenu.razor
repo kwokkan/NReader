@@ -1,27 +1,29 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">NReader.Blazor</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿<nav class="navbar navbar-expand-sm bg-light d-flex flex-column vh-100 overflow-auto w-25">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="~/">NReader.Blazor</a>
+        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
+    <div class="container-fluid @NavMenuCssClass" @onclick="ToggleNavMenu">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </li>
 
-        @if (_sources != null)
-        {
-            foreach (var source in _sources)
+            @if (_sources != null)
             {
-                <SourceNavItem Source="source"
-                               OnSourceSelected="HandleOnSourceSelectedAsync"
-                               OnFeedSelected="HandleOnFeedSelectedAsync"
-                               OnArticleSelected="HandleOnArticleSelectedAsync" />
+                foreach (var source in _sources)
+                {
+                    <SourceNavItem Source="source"
+                           OnSourceSelected="HandleOnSourceSelectedAsync"
+                           OnFeedSelected="HandleOnFeedSelectedAsync"
+                           OnArticleSelected="HandleOnArticleSelectedAsync" />
+                }
             }
-        }
-    </ul>
-</div>
+        </ul>
+    </div>
+</nav>

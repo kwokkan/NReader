@@ -34,14 +34,12 @@ else if (SelectedFeed != null)
     <div class="input-group">
         <UnreadDropdown @bind-Unread="_unread" />
 
-        <div class="input-group-append">
-            <button class="btn btn-primary"
-                    @onclick="HandleRefreshArticlesAsync"
-                    @onclick:preventDefault
-                    @onclick:stopPropagation>
-                Refresh
-            </button>
-        </div>
+        <button type="button" class="btn btn-primary"
+            @onclick="HandleRefreshArticlesAsync"
+            @onclick:preventDefault
+            @onclick:stopPropagation>
+            Refresh
+        </button>
     </div>
 
     if (_articles != null)
@@ -50,9 +48,9 @@ else if (SelectedFeed != null)
             @foreach (var article in _articles)
             {
                 <li class="article @(article.UserStats?.ReadCount > 0 ? "read" : "unread")"
-                    @onclick="() => HandleArticleSelectedAsync(article)"
-                    @onclick:preventDefault
-                    @onclick:stopPropagation>
+        @onclick="() => HandleArticleSelectedAsync(article)"
+        @onclick:preventDefault
+        @onclick:stopPropagation>
                     @article.Article.Title
                 </li>
             }
