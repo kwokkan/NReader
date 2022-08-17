@@ -20,7 +20,7 @@ namespace NReader.Blazor.Shared
         [Parameter]
         public EventCallback<StoredArticle> OnArticleSelected { get; set; }
 
-        private bool collapseNavMenu = true;
+        private bool collapseNavMenu = false;
 
         private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
