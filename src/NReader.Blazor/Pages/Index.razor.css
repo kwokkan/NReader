@@ -1,12 +1,4 @@
 ﻿
-.articles {
-    list-style: none;
-}
-
-.article {
-    cursor: pointer;
-}
-
     .article::before {
         content: "\2714"; /* check mark */
         padding: 0.5rem;

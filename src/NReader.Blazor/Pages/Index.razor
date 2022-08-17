@@ -42,19 +42,21 @@ else if (SelectedFeed != null)
         </button>
     </div>
 
+    <hr />
+
     if (_articles != null)
     {
-        <ul class="articles">
+        <div class="list-group articles">
             @foreach (var article in _articles)
             {
-                <li class="article @(article.UserStats?.ReadCount > 0 ? "read" : "unread")"
-        @onclick="() => HandleArticleSelectedAsync(article)"
-        @onclick:preventDefault
-        @onclick:stopPropagation>
+                <a href="#" class="list-group-item list-group-item-action article @(article.UserStats?.ReadCount > 0 ? "read" : "unread")"
+       @onclick="() => HandleArticleSelectedAsync(article)"
+       @onclick:preventDefault
+       @onclick:stopPropagation>
                     @article.Article.Title
-                </li>
+                </a>
             }
-        </ul>
+        </div>
     }
 }
 else if (SelectedSource != null)
