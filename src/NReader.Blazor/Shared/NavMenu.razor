@@ -1,13 +1,13 @@
-﻿<nav class="navbar navbar-expand-sm bg-light d-flex flex-column vh-100 overflow-auto w-25">
+﻿<nav class="navbar navbar-expand-sm bg-light border-end d-flex flex-column vh-100 overflow-auto w-25">
     <div class="container-fluid">
-        <a class="navbar-brand" href="~/">NReader.Blazor</a>
+        <a class="navbar-brand" href="/">NReader.Blazor</a>
         <button class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 
     <div class="container-fluid @NavMenuCssClass" @onclick="ToggleNavMenu">
-        <ul class="nav flex-column">
+        <ul class="nav nav-pills flex-column flex-grow-1">
             <li class="nav-item">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
