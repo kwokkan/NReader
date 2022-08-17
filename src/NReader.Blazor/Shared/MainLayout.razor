@@ -5,11 +5,11 @@
              OnFeedSelected="HandleOnFeedSelectedAsync"
              OnArticleSelected="HandleOnArticleSelectedAsync" />
 
-    <div class="container-fluid flex-grow-1 overflow-auto vh-100 main">
+    <div class="container-fluid flex-grow-1 overflow-auto vh-100 py-3 main">
         <CascadingValue Name="SelectedSource" Value="_selectedSource">
             <CascadingValue Name="SelectedFeed" Value="_selectedFeed">
                 <CascadingValue Name="SelectedArticle" Value="_selectedArticle">
-                    <div class="top-row px-4">
+                    <div class="top-row">
                         @if (_selectedArticle != null)
                         {
                             <h3>
@@ -30,7 +30,7 @@
                         }
                     </div>
 
-                    <div class="content px-4">
+                    <div class="content">
                         @Body
                     </div>
                 </CascadingValue>
