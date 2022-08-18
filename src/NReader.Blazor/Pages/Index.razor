@@ -8,26 +8,24 @@
         <small>@SelectedArticle.Article.Published</small>
     </aside>
 
-    <ul>
+    <div class="pages">
         @foreach (var page in SelectedArticle.Article.Pages)
         {
-            <li>
+            <div class="page">
                 @switch (page.Type)
                 {
                     case Abstractions.ArticleType.Text:
-                        <p>
-                            @(page.Content)
-                        </p>
+                        <p>@(page.Content)</p>
                         break;
                     case Abstractions.ArticleType.Image:
-                        <img src="@(page.Content)" />
+                        <img src="@(page.Content)" class="d-block" />
                         break;
                     default:
                         break;
                 }
-            </li>
+            </div>
         }
-    </ul>
+    </div>
 }
 else if (SelectedFeed != null)
 {

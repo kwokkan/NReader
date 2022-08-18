@@ -59,5 +59,10 @@ namespace NReader.Extensions.Test
         {
             return Task.FromResult(TestArticles);
         }
+
+        public override Task<Article> GetArticleAsync(Article article)
+        {
+            return Task.FromResult(article);
+        }
     }
 }
