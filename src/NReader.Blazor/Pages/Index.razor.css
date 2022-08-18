@@ -1,7 +1,6 @@
 ﻿
 .articles {
-    list-style-position: inside;
-    list-style-type: circle;
+    list-style: circle inside;
 }
 
     .articles .article {
