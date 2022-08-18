@@ -1,13 +1,13 @@
 ﻿
-    .article::before {
-        content: "\2714"; /* check mark */
-        padding: 0.5rem;
+.articles {
+    list-style-position: inside;
+    list-style-type: circle;
+}
+
+    .articles .article {
+        display: list-item;
     }
 
-    .article.read::before {
-        color: forestgreen;
-    }
-
-    .article.unread::before {
-        color: lightgrey;
-    }
+        .articles .article.read {
+            list-style-type: disc;
+        }
