@@ -34,7 +34,7 @@ public class XkcdSource : Source
         return Task.FromResult(DefaultFeeds);
     }
 
-    public override async Task<IReadOnlyCollection<Article>> GetArticlesAsync(Feed feed)
+    public override async Task<Pagination<Article>> GetArticlesAsync(Feed feed, int offset = 0, int limit = 100)
     {
         var responseString = await _httpClient.GetStringAsync(feed.Uri);
 
@@ -45,7 +45,7 @@ public class XkcdSource : Source
 
         var articles = new List<Article>(elements.Length);
 
-        foreach (var current in elements)
+        foreach (var current in elements.Skip(offset).Take(limit))
         {
             var href = current.Attributes["href"]!.Value;
             var id = href!.Replace("/", string.Empty);
@@ -58,7 +58,12 @@ public class XkcdSource : Source
             });
         }
 
-        return articles;
+        return new Pagination<Article>
+        {
+            Offset= offset,
+            Total = elements.Length,
+            Results = articles.AsReadOnly(),
+        };
     }
 
     public override async Task<Article> GetArticleAsync(Article article)

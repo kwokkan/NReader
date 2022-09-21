@@ -38,6 +38,13 @@ namespace NReader.Extensions.Test
             }
         };
 
+        private static readonly Pagination<Article> TestPagination = new Pagination<Article>
+        {
+            Offset = 0,
+            Total = TestArticles.Count,
+            Results = TestArticles,
+        };
+
         private static readonly IReadOnlyCollection<Feed> TestFeeds = new Feed[]
         {
             new Feed
@@ -55,9 +62,9 @@ namespace NReader.Extensions.Test
             return Task.FromResult(TestFeeds);
         }
 
-        public override Task<IReadOnlyCollection<Article>> GetArticlesAsync(Feed feed)
+        public override Task<Pagination<Article>> GetArticlesAsync(Feed feed, int offset = 0, int limit = 100)
         {
-            return Task.FromResult(TestArticles);
+            return Task.FromResult(TestPagination);
         }
 
         public override Task<Article> GetArticleAsync(Article article)
