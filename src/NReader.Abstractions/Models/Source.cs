@@ -7,7 +7,7 @@ namespace NReader.Abstractions
     public abstract class Source
     {
         private static readonly IReadOnlyCollection<Feed> EmptyFeeds = Array.Empty<Feed>();
-        private static readonly IReadOnlyCollection<Article> EmptyArticles = Array.Empty<Article>();
+        private static readonly Pagination<Article> EmptyArticles = new Pagination<Article> { Results = Array.Empty<Article>() };
 
         public virtual string Title { get; }
 
@@ -18,7 +18,7 @@ namespace NReader.Abstractions
             return Task.FromResult(EmptyFeeds);
         }
 
-        public virtual Task<IReadOnlyCollection<Article>> GetArticlesAsync(Feed feed)
+        public virtual Task<Pagination<Article>> GetArticlesAsync(Feed feed, int offset = 0, int limit = 100)
         {
             return Task.FromResult(EmptyArticles);
         }
